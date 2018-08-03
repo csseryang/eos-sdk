@@ -19049,9 +19049,14 @@ const ecc = require('eosjs-ecc')
 
 module.exports = {
 	name:"main",
-	getKey: function() {
-		return ecc.randomKey();
+	getKeys: function() {
+		var p =  ecc.randomKey().then(privateKey => {
+				var publicKey = ecc.privateToPublic(privateKey);
+				return Promise.resolve([privateKey, publicKey])
+			});
+		return p;
 	},
+	sign: ecc.sign,
 	privateToPublic: ecc.privateToPublic
 }
 },{"eosjs-ecc":41}]},{},[]);

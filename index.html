@@ -7,25 +7,83 @@
 
 	<script src="eos_ecc.js"></script>
 	<script>
-		f = function() {
-			// Import dependency
-			var ecc = require("ecc");
+		// Import dependency
+		var ecc = require("ecc");
 
-			// Promise is returned. Asynchronously get results in promise.then()
-			var promise = ecc.getKey()
+		show = function(privateKey, publicKey, signed) {
+			console.log(privateKey)
+			console.log(publicKey)
+			console.log(signed)
 
-			// Getting result private and public key
-			promise.then(privateKey => {
-				var publicKey = ecc.privateToPublic(privateKey);
-				
-				alert("PrivateKey: " + privateKey + "\n PublicKey: " + publicKey)
-			})
+			document.getElementById("pk_val").innerHTML = privateKey
+			document.getElementById("pub_val").innerHTML = publicKey
+			document.getElementById("signed").innerHTML = signed
+			document.getElementById("time").innerHTML = new Date().toLocaleTimeString()
 		}
+
+		f = function() {
+			try {
+				var pk = document.getElementById('pk').value
+				var s = document.getElementById('s').value
+
+				console.log("pk" + pk)
+				if (pk !== "") {
+
+					var privateKey = pk;
+					var publicKey = ecc.privateToPublic(privateKey)
+					var signed = ecc.sign(s, privateKey);
+					
+					show(privateKey, publicKey, signed)
+						
+				} else {
+					// Promise is returned. Asynchronously get results in promise.then()
+					var p = ecc.getKeys()
+
+					// Getting result private and public key, then sign input string
+					p.then((keys) => {		
+						var [privateKey, publicKey]  = keys;
+						var signed = ecc.sign(s, privateKey);
+						
+						show(privateKey, publicKey, signed)
+					})
+				}
+			} catch(e) {
+				alert(e)
+			}
+			
+		}
+
 	</script>
 
-	<p id="demo">
-		<button onclick=f()>Test</button>
-	</p>
+	<form id="sign_test"> 
+		PrivateKey (Random if empty): <br>
+			<input type="text" id="pk"><br><br>
+		String To Sign: <br>
+			<input type="text" id="s"><br><br>
+  		<input type="button" onclick="f()" value="Run">
+	</form>
+
+	<br><br>
+
+	<div><h3>Results:</h3></div>
+	<table id="table-1">
+		<tr>
+            <th>Local Time:</th>
+            <td id = 'time'></td>
+        </tr>
+        <tr>
+            <th>Private Key</th>
+            <td id = 'pk_val'></td>
+        </tr>
+        <tr>
+            <th>Public Key</th>
+            <td id = 'pub_val'></td>
+        </tr>
+        <tr>
+            <th>Signed Data</th>
+            <td id = 'signed'></td>
+        </tr>
+    </table>
 
 </body>
 </html> 
