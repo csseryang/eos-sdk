@@ -1,0 +1,28 @@
+
+
+<!DOCTYPE html>
+<html>
+<body>
+	<h2>EOS ECC Demo</h2>
+
+	<script src="eos_ecc.js"></script>
+	<script>
+		f = function() {
+			var ecc = require("ecc");
+			var p = ecc.getKey()
+
+			p.then(privateKey => {
+				var publicKey = ecc.privateToPublic(privateKey);
+				console.log(privateKey)
+				console.log(publicKey)
+				alert("PrivateKey: " + privateKey + "\n PublicKey: " + publicKey)
+			})
+		}
+	</script>
+
+	<p id="demo">
+		<button onclick=f()>Test</button>
+	</p>
+
+</body>
+</html> 
