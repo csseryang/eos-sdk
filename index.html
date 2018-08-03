@@ -8,13 +8,16 @@
 	<script src="eos_ecc.js"></script>
 	<script>
 		f = function() {
+			// Import dependency
 			var ecc = require("ecc");
-			var p = ecc.getKey()
 
-			p.then(privateKey => {
+			// Promise is returned. Asynchronously get results in promise.then()
+			var promise = ecc.getKey()
+
+			// Getting result private and public key
+			promise.then(privateKey => {
 				var publicKey = ecc.privateToPublic(privateKey);
-				console.log(privateKey)
-				console.log(publicKey)
+				
 				alert("PrivateKey: " + privateKey + "\n PublicKey: " + publicKey)
 			})
 		}
