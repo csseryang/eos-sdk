@@ -21,7 +21,7 @@
 			var p = ecc.getKeys()
 			p.then((keys) => {		
 				var [privateKey, publicKey]  = keys;
-				window.location.href ="?privateKey=" + privateKey + "&publicKey=" + publicKey;
+				window.location.href ="results?privateKey=" + privateKey + "&publicKey=" + publicKey;
 
 			})
 		}
@@ -30,8 +30,6 @@
 
 		var pk = params['privateKey'];
 		var ppk = params['publicKey'];
-
-		
 
 		if (params['privateKey'] == undefined || params['publicKey'] == undefined){
 			f();

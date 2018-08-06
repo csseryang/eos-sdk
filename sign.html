@@ -22,7 +22,7 @@
 
 		if (getUrlVars()['s'] != undefined || getUrlVars()['privateKey'] != undefined){
 			var signed = ecc.sign(s, pk);
-			window.location.href ="?signed=" + signed;
+			window.location.href ="results?signed=" + signed;
 		}
 		
 	</script>
