@@ -1,0 +1,25 @@
+
+
+<!DOCTYPE html>
+<html>
+<body>
+	<script src="eos_ecc.js"></script>
+	<script>
+		// Import dependency
+		var ecc = require("ecc");
+		
+		function key_gen() {
+			var p = ecc.getKeys()
+			p.then((keys) => {		
+				var [privateKey, publicKey]  = keys;
+				console.log(JSON.stringify({"privateKey": privateKey, "publicKey": publicKey}))
+			})
+		}
+
+		function sign(s, pvk) {
+			var signature = ecc.sign(s, pvk);
+			console.log(JSON.stringify({"signature": signature}))
+		}
+	</script>
+</body>
+</html> 
