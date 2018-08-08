@@ -1,7 +1,7 @@
 var ecc = eosjs_ecc
 var config = {
   chainId: '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347', // 32 byte (64 char) hex string
-  httpEndpoint: 'http://52.8.73.95:8001',
+  httpEndpoint: 'http://52.8.73.95:8000',
   expireInSeconds: 60,
   broadcast: true,
   logger: {
@@ -35,9 +35,9 @@ function get_account(name) {
 function get_balance(name) {
 	var eos = Eos(config)
 	eos.getTableRows({
-	  "scope": "cybchainsys5",
+	  "scope": name,
 	  "code": "eosio.token",
-	  "table": "token",
+	  "table": "accounts",
 	  "json": true
 	}).then(balance=>{
 		console.log(JSON.stringify({'balance': balance.rows}));
