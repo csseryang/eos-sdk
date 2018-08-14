@@ -45,6 +45,16 @@ function sign(s, pvk, callback=log) {
 }
 
 // Get account information from EOS 
+function get_account2(name) {
+	const eos = Eos(config)
+	eos.getAccount(name).then(result=>{
+		console.log(JSON.stringify({'account': result}))
+	}).catch(error=>{
+		console.log(JSON.stringify({'error': error}))
+	})
+}
+
+// Get account information from EOS 
 function get_account(name, callback=log) {
 	const eos = Eos(config)
 	eos.getAccount(name).then(result=>{
