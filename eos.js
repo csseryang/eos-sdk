@@ -23,7 +23,7 @@ function random_key() {
 // Generate public key from private key
 function pvk_to_puk(pvk) {
 	var puk = ecc.privateToPublic(pvk);
-	console.log(null, JSON.stringify({"publicKey": puk}));
+	console.log(JSON.stringify({"publicKey": puk}));
 }
 
 // Using privateKey to sign any input string
