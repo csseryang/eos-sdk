@@ -14,6 +14,19 @@ const config = {
   }
 }
 
+
+// private helper function for appending private key to config
+// not for external use
+function _config(pvk) {
+	const cfg = Object.assign({}, config);
+	if (pvk !== undefined) {
+		cfg.sign = true;
+		cfg.keyProvider = [pvk];
+	}
+	return cfg;
+}
+
+
 // Generate random private key/ public key pair
 function random_key() {
 	ecc.randomKey().then(pvk => {		
@@ -24,11 +37,13 @@ function random_key() {
 	})
 }
 
+
 // Generate public key from private key
 function pvk_to_puk(pvk) {
 	var puk = ecc.privateToPublic(pvk);
 	console.log(JSON.stringify({"publicKey": puk}));
 }
+
 
 // Using privateKey to sign any input string
 function sign(s, pvk) {
@@ -40,9 +55,10 @@ function sign(s, pvk) {
 	}
 }
 
+
 // Get account information from EOS 
 function get_account(name) {
-	const eos = Eos(config);
+	const eos = Eos(_config());
 	eos.getAccount(name).then(result=>{
 		console.log(JSON.stringify({'account': result}))
 	}).catch(error=>{
@@ -50,16 +66,17 @@ function get_account(name) {
 	})
 }
 
+
 // Get account balance from contract issuer
 // code is smart contract name
 // e.g. get_balance('mhwb3kzafoxg')
 function get_balance(name, code='eosio.token') {
-	const eos = Eos(config);
+	const eos = Eos(_config());
 	eos.getTableRows({
-	  "scope": name,
-	  "code": code,
-	  "table": "accounts",
-	  "json": true
+		"scope": name,
+		"code": code,
+		"table": "accounts",
+		"json": true
 	}).then(balance=>{
 		console.log(JSON.stringify({'balance': balance.rows}));
 	}).catch(error=>{
@@ -67,10 +84,11 @@ function get_balance(name, code='eosio.token') {
 	})
 }
 
+
 // Get account names by public key
 // e.g. get_key_accounts('EOS5FxA3PnsnUu1prJRuqFKDXuQFZkEDjC3XudPUhfxfwooSfDYdr')
 function get_key_accounts(puk) {
-	const eos = Eos(config);
+	const eos = Eos(_config());
 	eos.getKeyAccounts(puk).then(names=>{
 		console.log(JSON.stringify({'names': names}));
 
@@ -79,11 +97,12 @@ function get_key_accounts(puk) {
 	})
 }
 
+
 // get currency info by symbol
 // code is smart contract name
 // e.g. get_currency_stats('SYS')
 function get_currency_stats(symbol, code='eosio.token') {
-	const eos = Eos(config);
+	const eos = Eos(_config());
 	eos.getCurrencyStats(code, symbol).then(stats=>{
 		console.log(JSON.stringify({'stats': stats}));
 	}).catch(error=>{
@@ -91,23 +110,6 @@ function get_currency_stats(symbol, code='eosio.token') {
 	})
 }
 
-// private helper function for appending private key to config
-// not for external use
-function _config(pvk) {
-	const cfg = {
-	  chainId: chain_id,
-	  httpEndpoint: end_point,
-	  keyProvider: [pvk],
-	  sign: true,
-	  expireInSeconds: 60,
-	  broadcast: true,
-	  logger: {
-	  	log: null, 
-	  	error: null,
-	  }
-	}
-	return cfg;
-}
 
 // Transfer currency from one account to another
 // Amount must have the same decimal places as token's supply/max_supply.
@@ -117,8 +119,12 @@ function _config(pvk) {
 function transfer(from, to, amount, memo, pvk) {
 	const eos = Eos(_config(pvk));
 	eos.transfer(from, to, amount, memo).then(result=>{
-	  console.log({'result':result});
+		console.log({'result':result});
 	}).catch(error=>{
-	  console.log(JSON.stringify({'error': error.message}));
+		try {
+			console.log(JSON.stringify({'error': JSON.parse(error).message }));
+		} catch(e){
+			console.log(JSON.stringify({'error': error.message }));
+		}
 	})
 }
