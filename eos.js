@@ -1,7 +1,11 @@
 const ecc = eosjs_ecc
+
+const chain_id = '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347'
+const end_point = 'http://52.8.73.95:8000'
+
 const config = {
-  chainId: '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347', // 32 byte (64 char) hex string
-  httpEndpoint: 'http://52.8.73.95:8000',
+  chainId: chain_id,
+  httpEndpoint: end_point,
   expireInSeconds: 60,
   broadcast: true,
   logger: {
@@ -14,9 +18,9 @@ const config = {
 function random_key() {
 	ecc.randomKey().then(pvk => {		
 		var puk = ecc.privateToPublic(pvk);
-		console.log(JSON.stringify({"privateKey": pvk, "publicKey": puk}))
+		console.log(JSON.stringify({"privateKey": pvk, "publicKey": puk}));
 	}).catch(error=>{
-		console.log(JSON.stringify({'error': error}))
+		console.log(JSON.stringify({'error': error}));
 	})
 }
 
@@ -30,19 +34,19 @@ function pvk_to_puk(pvk) {
 function sign(s, pvk) {
 	try {
 		var signature = ecc.sign(s, pvk);
-		console.log(JSON.stringify({"signature": signature}))
+		console.log(JSON.stringify({"signature": signature}));
 	} catch(error) {
-		console.log(JSON.stringify({'error': error.message}))
+		console.log(JSON.stringify({'error': error.message}));
 	}
 }
 
 // Get account information from EOS 
 function get_account(name) {
-	const eos = Eos(config)
+	const eos = Eos(config);
 	eos.getAccount(name).then(result=>{
 		console.log(JSON.stringify({'account': result}))
 	}).catch(error=>{
-		console.log(JSON.stringify({'error': error}))
+		console.log(JSON.stringify({'error': error}));
 	})
 }
 
@@ -50,7 +54,7 @@ function get_account(name) {
 // code is smart contract name
 // e.g. get_balance('mhwb3kzafoxg')
 function get_balance(name, code='eosio.token') {
-	const eos = Eos(config)
+	const eos = Eos(config);
 	eos.getTableRows({
 	  "scope": name,
 	  "code": code,
@@ -59,19 +63,19 @@ function get_balance(name, code='eosio.token') {
 	}).then(balance=>{
 		console.log(JSON.stringify({'balance': balance.rows}));
 	}).catch(error=>{
-		console.log(JSON.stringify({'error': error}))
+		console.log(JSON.stringify({'error': error}));
 	})
 }
 
 // Get account names by public key
 // e.g. get_key_accounts('EOS5FxA3PnsnUu1prJRuqFKDXuQFZkEDjC3XudPUhfxfwooSfDYdr')
 function get_key_accounts(puk) {
-	const eos = Eos(config)
+	const eos = Eos(config);
 	eos.getKeyAccounts(puk).then(names=>{
 		console.log(JSON.stringify({'names': names}));
 
 	}).catch(error=>{
-		console.log(JSON.stringify({'error': error}))
+		console.log(JSON.stringify({'error': error}));
 	})
 }
 
@@ -79,20 +83,29 @@ function get_key_accounts(puk) {
 // code is smart contract name
 // e.g. get_currency_stats('SYS')
 function get_currency_stats(symbol, code='eosio.token') {
-	const eos = Eos(config)
+	const eos = Eos(config);
 	eos.getCurrencyStats(code, symbol).then(stats=>{
 		console.log(JSON.stringify({'stats': stats}));
 	}).catch(error=>{
-		console.log(JSON.stringify({'error': error}))
+		console.log(JSON.stringify({'error': error}));
 	})
 }
 
 // private helper function for appending private key to config
 // not for external use
-function _add_pvk(pvk) {
-	const cfg = Object.assign({}, config);
-	cfg.sign = true;
-	cfg.keyProvider = [pvk];
+function _config(pvk) {
+	const cfg = {
+	  chainId: chain_id,
+	  httpEndpoint: end_point,
+	  keyProvider: [pvk],
+	  sign: true,
+	  expireInSeconds: 60,
+	  broadcast: true,
+	  logger: {
+	  	log: null, 
+	  	error: null,
+	  }
+	}
 	return cfg;
 }
 
@@ -102,10 +115,10 @@ function _add_pvk(pvk) {
 // Get token info by function get_token_info()
 // e.g. transfer('from_user', 'to_user', '3.1415 EZPT', 'sample memo', private_key')
 function transfer(from, to, amount, memo, pvk) {
-	const eos = Eos(_add_pvk(pvk))
+	const eos = Eos(_config(pvk));
 	eos.transfer(from, to, amount, memo).then(result=>{
-	  console.log({'result':result})
+	  console.log({'result':result});
 	}).catch(error=>{
-	  console.log(JSON.stringify({'error': error.message}))
+	  console.log(JSON.stringify({'error': error.message}));
 	})
 }
