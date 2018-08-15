@@ -91,7 +91,6 @@ function get_key_accounts(puk) {
 	const eos = Eos(_config());
 	eos.getKeyAccounts(puk).then(names=>{
 		console.log(JSON.stringify({'names': names}));
-
 	}).catch(error=>{
 		console.log(JSON.stringify({'error': error}));
 	})
