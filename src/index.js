@@ -1,21 +1,10 @@
 "use strict";
 
-const EosJs = require('eosjs');
+const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
+const settings = require('./config');
 
-const chain_id = '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347';
-const end_point = 'http://52.8.73.95:8000';
-
-const config = {
-    chainId: chain_id,
-    httpEndpoint: end_point,
-    expireInSeconds: 60,
-    broadcast: true,
-    logger: {
-        log: null,
-        error: null,
-    }
-};
+const config = settings.config;
 
 // Generate random private key/ public key pair
 function random_key(callback = console.log) {
@@ -56,12 +45,12 @@ function _config(pvk) {
 }
 
 // Get account information from EOS
-function get_account(name) {
-    const eos = EosJs(_config());
+function get_account(name, callback = console.log) {
+    const eos = Eos(_config());
     eos.getAccount(name).then(result => {
-        console.log(JSON.stringify({'account': result}))
+        callback(null, JSON.stringify({'account': result}))
     }).catch(error => {
-        console.log(JSON.stringify({'error': error}));
+        callback(JSON.stringify({'error': error}));
     })
 }
 
@@ -69,25 +58,25 @@ function get_account(name) {
 // Get account balance from contract issuer
 // code is smart contract name
 // e.g. get_balance('mhwb3kzafoxg')
-function get_balance(name, code = 'eosio.token') {
-    const eos = EosJs(_config());
+function get_balance(name, code = 'eosio.token', callback = console.log) {
+    const eos = Eos(_config());
     eos.getTableRows({
         "scope": name,
         "code": code,
         "table": "accounts",
         "json": true
     }).then(balance => {
-        console.log(JSON.stringify({'balance': balance.rows}));
+        callback(null, JSON.stringify({'balance': balance.rows}));
     }).catch(error => {
-        console.log(JSON.stringify({'error': error}));
-    })
+        callback(JSON.stringify({'error': error}));
+    });
 }
 
 
 // Get account names by public key
 // e.g. get_key_accounts('EOS5FxA3PnsnUu1prJRuqFKDXuQFZkEDjC3XudPUhfxfwooSfDYdr')
 function get_key_accounts(puk) {
-    const eos = EosJs(_config());
+    const eos = Eos(_config());
     eos.getKeyAccounts(puk).then(names => {
         console.log(JSON.stringify({'names': names}));
     }).catch(error => {
@@ -100,7 +89,7 @@ function get_key_accounts(puk) {
 // code is smart contract name
 // e.g. get_currency_stats('SYS')
 function get_currency_stats(symbol, code = 'eosio.token') {
-    const eos = EosJs(_config());
+    const eos = Eos(_config());
     eos.getCurrencyStats(code, symbol).then(stats => {
         console.log(JSON.stringify({'stats': stats}));
     }).catch(error => {
@@ -115,7 +104,7 @@ function get_currency_stats(symbol, code = 'eosio.token') {
 // Get token info by function get_token_info()
 // e.g. transfer('from_user', 'to_user', '3.1415 EZPT', 'sample memo', private_key')
 function transfer(from, to, amount, memo, pvk) {
-    const eos = EosJs(_config(pvk));
+    const eos = Eos(_config(pvk));
     eos.transfer(from, to, amount, memo).then(result => {
         console.log({'result': result});
     }).catch(error => {
