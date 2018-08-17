@@ -132,5 +132,5 @@ module.exports = {
     get_balance,
     get_key_accounts,
     get_currency_stats,
-    transfer
+    transfer,
 };
