@@ -105,7 +105,6 @@ function get_currency_stats(symbol, code = 'eosio.token', callback = log) {
     })
 }
 
-
 // Transfer currency from one account to another
 // Amount must have the same decimal places as token's supply/max_supply.
 // e.g. SYS's max_supply = 10000.0000, then '1.0000 SYS' is legal while '1 SYS' is illegal
@@ -123,7 +122,6 @@ function transfer(from, to, amount, memo, pvk, callback = log) {
         }
     })
 }
-
 
 module.exports = {
     random_key,
