@@ -124,6 +124,7 @@ function transfer(from, to, amount, memo, pvk, callback = log) {
     })
 }
 
+
 module.exports = {
     random_key,
     pvk_to_puk,
