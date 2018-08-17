@@ -92,7 +92,6 @@ function get_key_accounts(puk, callback = log) {
     })
 }
 
-
 // get currency info by symbol
 // code is smart contract name
 // e.g. get_currency_stats('SYS')
