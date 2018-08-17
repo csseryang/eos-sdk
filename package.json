@@ -4,7 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "node build/build.js",
-    "test": "node test/test.js"
+    "test": "mocha test/test.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,10 @@
   "dependencies": {
     "eosjs": "~16.0.2",
     "eosjs-ecc": "~4.0.3"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "chai": "~4.1.2"
   },
   "engines": {
     "node": ">= 4.0.0",
