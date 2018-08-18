@@ -19,7 +19,8 @@ before_deploy:
 #  on:
 #    tags: true
 
-provider: pages
+deploy:
+  provider: pages
   skip_cleanup: true
   repo: "qding-bot/demo"
   api_key:
