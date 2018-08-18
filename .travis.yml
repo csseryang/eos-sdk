@@ -6,8 +6,7 @@ script:
   npm test
 
 before_deploy:
-  npm run build
-  cp index.html dist/index.html
+  npm run build && cp index.html dist/index.html
 
 deploy:
   provider: releases
