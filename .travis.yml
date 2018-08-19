@@ -23,8 +23,7 @@ deploy:
   provider: pages
   skip_cleanup: true
   repo: "qding-bot/demo"
-  api_key:
-    secure: "${GH_TOKENS}"
+  github_token: "${GH_TOKENS}"
   local_dir: dist
   on:
     branch: master
