@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '8.0'
+ '8.0'
 
 script:
   npm test
@@ -11,9 +11,10 @@ before_deploy:
 
 deploy:
   provider: pages
-  skip_cleanup: true
-  repo: "qding-bot/demo"
+  skip-cleanup: true
   github-token: "${GH_TOKENS}"
-  local_dir: dist
+  keep-history: true
   on:
     branch: master
+  local-dir: dist
+  repo: "qding-bot/demo"
