@@ -9,21 +9,11 @@ before_deploy:
   npm run build &&
   cp index.html dist/index.html
 
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: "${GITHUB_TOKENS}"
-#  file_glob: true
-#  file: "dist/*"
-#  skip_cleanup: true
-#  on:
-#    tags: true
-
 deploy:
   provider: pages
   skip_cleanup: true
   repo: "qding-bot/demo"
-  github_token: "${GH_TOKENS}"
+  github-token: "${GH_TOKENS}"
   local_dir: dist
   on:
     branch: master
