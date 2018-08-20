@@ -10,7 +10,7 @@ function log(error, result) {
     if (result !== undefined) {
         console.log(result);
     } else {
-        console.log(result);
+        console.log(error);
     }
 }
 
@@ -27,7 +27,7 @@ function random_key(callback = log) {
 // Generate public key from private key
 function pvk_to_puk(pvk, callback = log) {
     const puk = ecc.privateToPublic(pvk);
-    callback(JSON.stringify({"publicKey": puk}));
+    callback(null, JSON.stringify({"publicKey": puk}));
 }
 
 

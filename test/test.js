@@ -12,7 +12,7 @@ describe('Test Random key generation: ', function () {
     it('Key transfer should be correct', function () {
         const pvk = "5JSWcuJu9ECEXqk3BCYkuK98A8QnrVSZZfzudw6hD2rNrpfPSVa";
         const puk = "EOS6WRTBxUmngRjc5Nxjpt9WnCYLb4eBaLxvdqmofmcB2VT3g59dJ";
-        eos_sdk.pvk_to_puk(pvk, result => {
+        eos_sdk.pvk_to_puk(pvk, (error, result) => {
             expect(JSON.parse(result).publicKey).to.be.equal(puk);
         });
     });
