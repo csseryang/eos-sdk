@@ -15,7 +15,7 @@ gulp.task('build-js', function () {
         .transform(babelify, {
                 "presets": ["env"],
                 "plugins": [
-                    "transform-object-assign",
+                    ["transform-runtime"],
                 ]
             }
         )

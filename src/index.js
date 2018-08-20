@@ -3,7 +3,6 @@
 const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
 const settings = require('./config');
-require('babel-polyfill');
 
 const config = settings.config;
 
@@ -120,13 +119,25 @@ function transfer(from, to, amount, memo, pvk, callback = log) {
     });
 }
 
+function test() {
+    const eos = Eos(_config());
+    eos.contract('relation')
+        .then((contract) => {
+            contract.insertinvent({sender: "richard", item: "laptop"},
+                {scope: 'inventory', authorization: ['richard']})
+        })
+}
+
+const eosApi = Eos(_config());
+
 module.exports = {
     random_key: randomKey,
     pvk_to_puk: pvkToPuk,
-    sign,
+    sign: sign,
     get_account: getAccount,
     get_balance: getBalance,
     get_key_accounts: getKeyAccounts,
     get_currency_stats: getCurrencyStats,
-    transfer
+    transfer: transfer,
+    eosApi: eosApi,
 };
