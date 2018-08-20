@@ -6,7 +6,7 @@ module.exports = {
         broadcast: true,
         logger: {
             log: null,
-            error: console.debug,
+            error: null,
         }
     }
 
