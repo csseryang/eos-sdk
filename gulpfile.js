@@ -15,8 +15,14 @@ gulp.task('build-js', function () {
         .transform(babelify, {
                 "presets": ["es2015", "stage-2"],
                 "plugins": [
+                    ["transform-runtime", {
+                        "helpers": false,
+                        "polyfill": true,
+                        "regenerator": true,
+                        "moduleName": "babel-runtime"
+                    }],
                     ["transform-class-properties", {"loose": false}],
-                    "transform-object-assign",
+                    ["transform-object-assign"],
                     ["transform-es2015-classes", {"loose": true}],
                     ["transform-es2015-modules-commonjs", {"loose": false}],
                     ["transform-es2015-for-of", {"loose": true}]
