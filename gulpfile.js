@@ -16,7 +16,7 @@ gulp.task('build-js', function () {
                 "presets": ["es2015", "stage-2"],
                 "plugins": [
                     ["transform-runtime", {
-                        "helpers": false,
+                        "helpers": true,
                         "polyfill": true,
                         "regenerator": true,
                         "moduleName": "babel-runtime"
