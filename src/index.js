@@ -6,43 +6,9 @@ const settings = require('./config');
 
 const config = settings.config;
 
-function log(error, result) {
-    if (result !== undefined) {
-        console.log(result);
-    } else {
-        console.log(error);
-    }
-}
-
-// Generate random private key/ public key pair
-function randomKey(callback = log) {
-    ecc.randomKey().then(pvk => {
-        const puk = ecc.privateToPublic(pvk);
-        callback(null, JSON.stringify({'privateKey': pvk, 'publicKey': puk}));
-    }).catch(error => {
-        callback(JSON.stringify({'error': error}));
-    });
-}
-
-// Generate public key from private key
-function pvkToPuk(pvk, callback = log) {
-    const puk = ecc.privateToPublic(pvk);
-    callback(null, JSON.stringify({'publicKey': puk}));
-}
-
-// Using privateKey to sign any input string
-function sign(s, pvk, callback = log) {
-    try {
-        const signature = ecc.sign(s, pvk);
-        callback(null, JSON.stringify({'signature': signature}));
-    } catch (error) {
-        callback(JSON.stringify({'error': error.message}));
-    }
-}
-
 // private helper function for appending private key to config
 // not for external use
-function _config(pvk) {
+function _config (pvk) {
     const cfg = Object.assign({}, config);
     if (pvk !== undefined) {
         cfg.sign = true;
@@ -51,20 +17,58 @@ function _config(pvk) {
     return cfg;
 }
 
+function log (error, result) {
+    if (result !== undefined) {
+        console.log(result);
+    } else {
+        console.log(error);
+    }
+}
+
+// Generate random private key/ public key pair
+function random_key (callback = log) {
+    ecc.randomKey().then(pvk => {
+        const puk = ecc.privateToPublic(pvk);
+        callback(null, JSON.stringify({'privateKey': pvk, 'publicKey': puk}));
+    }).catch(error => {
+        callback(JSON.stringify({'error': error.message || error}));
+    });
+}
+
+// Generate public key from private key
+function pvk_to_puk (pvk, callback = log) {
+    const puk = ecc.privateToPublic(pvk);
+    try {
+        callback(null, JSON.stringify({'publicKey': puk}));
+    } catch (error) {
+        callback(JSON.stringify({'error': error.message || error}));
+    }
+}
+
+// Using privateKey to sign any input string
+function sign (s, pvk, callback = log) {
+    try {
+        const signature = ecc.sign(s, pvk);
+        callback(null, JSON.stringify({'signature': signature}));
+    } catch (error) {
+        callback(JSON.stringify({'error': error.message || error}));
+    }
+}
+
 // Get account information from EOS
-function getAccount(name, callback = log) {
+function get_account (name, callback = log) {
     const eos = Eos(_config());
     eos.getAccount(name).then(result => {
         callback(null, JSON.stringify({'account': result}));
     }).catch(error => {
-        callback(JSON.stringify({'error': error}));
+        callback(JSON.stringify({'error': error.message || error}));
     });
 }
 
 // Get account balance from contract issuer
 // code is smart contract name
 // e.g. getBalance('mhwb3kzafoxg')
-function getBalance(name, code = 'eosio.token', callback = log) {
+function get_balance (name, code = 'eosio.token', callback = log) {
     const eos = Eos(_config());
     eos.getTableRows({
         'scope': name,
@@ -74,30 +78,30 @@ function getBalance(name, code = 'eosio.token', callback = log) {
     }).then(balance => {
         callback(null, JSON.stringify({'balance': balance.rows}));
     }).catch(error => {
-        callback(JSON.stringify({'error': error}));
+        callback(JSON.stringify({'error': error.message || error}));
     });
 }
 
 // Get account names by public key
 // e.g. getKeyAccounts('EOS5FxA3PnsnUu1prJRuqFKDXuQFZkEDjC3XudPUhfxfwooSfDYdr')
-function getKeyAccounts(puk, callback = log) {
+function get_key_accounts (puk, callback = log) {
     const eos = Eos(_config());
     eos.getKeyAccounts(puk).then(names => {
         callback(null, JSON.stringify({'names': names}));
     }).catch(error => {
-        callback(JSON.stringify({'error': error}));
+        callback(JSON.stringify({'error': error.message || error}));
     });
 }
 
 // get currency info by symbol
 // code is smart contract name
 // e.g. getCurrencyStats('SYS')
-function getCurrencyStats(symbol, code = 'eosio.token', callback = log) {
+function get_currency_stats (symbol, code = 'eosio.token', callback = log) {
     const eos = Eos(_config());
     eos.getCurrencyStats(code, symbol).then(stats => {
         callback(null, JSON.stringify({'stats': stats}));
     }).catch(error => {
-        callback(JSON.stringify({'error': error}));
+        callback(JSON.stringify({'error': error.message || error}));
     });
 }
 
@@ -106,37 +110,33 @@ function getCurrencyStats(symbol, code = 'eosio.token', callback = log) {
 // e.g. SYS's max_supply = 10000.0000, then '1.0000 SYS' is legal while '1 SYS' is illegal
 // Get token info by function get_token_info()
 // e.g. transfer('from_user', 'to_user', '3.1415 EZPT', 'sample memo', private_key')
-function transfer(from, to, amount, memo, pvk, callback = log) {
+function transfer (from, to, amount, memo, pvk, callback = log) {
     const eos = Eos(_config(pvk));
     eos.transfer(from, to, amount, memo).then(result => {
         callback(null, {'result': result});
     }).catch(error => {
-        try {
-            callback(JSON.stringify({'error': JSON.parse(error).message}));
-        } catch (e) {
-            callback(JSON.stringify({'error': error.message}));
-        }
+        callback(JSON.stringify({'error': error.message || error}));
     });
 }
 
 class Relation {
-    constructor(name) {
+    constructor (name) {
         this.name = name;
     }
 
-    register(name, type, icon, uri, pvk, callback = log) {
+    register (name, type, icon, uri, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": name,
-                    "type": type,
-                    "icon": icon,
-                    "uri": uri
+                    'name': name,
+                    'type': type,
+                    'icon': icon,
+                    'uri': uri
                 };
 
                 const option = {
-                    'authorization': [name + `@active`],
+                    'authorization': [name + `@active`]
                 };
                 return contract.createobj(param, option);
             })
@@ -145,19 +145,19 @@ class Relation {
             })
             .catch(error => {
                 callback(JSON.stringify({'error': error.message || error}));
-            })
+            });
     }
 
-    apply(name, apply, pvk, callback = log) {
+    apply (name, apply, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": name,
-                    "apply": apply,
+                    'name': name,
+                    'apply': apply
                 };
                 const option = {
-                    'authorization': [name + `@active`],
+                    'authorization': [name + `@active`]
                 };
 
                 return contract.apply(param, option);
@@ -166,20 +166,20 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                callback(JSON.stringify({'error': error}));
-            })
+                callback(JSON.stringify({'error': error.message || error}));
+            });
     }
 
-    accept(from, to, pvk, callback = log) {
+    accept (from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": from,
-                    "addname": to,
+                    'name': from,
+                    'addname': to
                 };
                 const option = {
-                    'authorization': [from + `@active`],
+                    'authorization': [from + `@active`]
                 };
 
                 return contract.addname(param, option);
@@ -188,42 +188,41 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                callback(JSON.stringify({'error': error.message}));
-            })
+                callback(JSON.stringify({'error': error.message || error}));
+            });
     }
 
-    reject(from, to, pvk, callback = log) {
+    reject (from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": from,
-                    "rejectname": to,
+                    'name': from,
+                    'rejectname': to
                 };
                 const option = {
-                    'authorization': [from + `@active`],
+                    'authorization': [from + `@active`]
                 };
-
                 return contract.rejectname(param, option);
             })
             .then(result => {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                callback(JSON.stringify({'error': error.message}));
-            })
+                callback(JSON.stringify({'error': error.message || error}));
+            });
     }
 
-    cancel(from, to, pvk, callback = log) {
+    cancel (from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": from,
-                    "cancel": to,
+                    'name': from,
+                    'cancel': to
                 };
                 const option = {
-                    'authorization': [from + `@active`],
+                    'authorization': [from + `@active`]
                 };
 
                 return contract.cancel(param, option);
@@ -232,20 +231,20 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                callback(JSON.stringify({'error': error}));
-            })
+                callback(JSON.stringify({'error': error.message || error}));
+            });
     }
 
-    delete(from, to, pvk, callback = log) {
+    delete (from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
-                    "name": from,
-                    "deletename": to,
+                    'name': from,
+                    'deletename': to
                 };
                 const option = {
-                    'authorization': [from + `@active`],
+                    'authorization': [from + `@active`]
                 };
 
                 return contract.deletename(param, option);
@@ -254,12 +253,11 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                callback(JSON.stringify({'error': error.message}));
-            })
+                callback(JSON.stringify({'error': error.message || error}));
+            });
     }
 
-
-    get_apply(name, callback = log) {
+    get_apply (name, callback = log) {
         const eos = Eos(_config());
         eos.getTableRows({
             'scope': name,
@@ -269,11 +267,11 @@ class Relation {
         }).then(balance => {
             callback(null, JSON.stringify({'result': balance.rows}));
         }).catch(error => {
-            callback(JSON.stringify({'error': error}));
+            callback(JSON.stringify({'error': error.message || error}));
         });
     }
 
-    get_pending(name, callback = log) {
+    get_pending (name, callback = log) {
         const eos = Eos(_config());
         eos.getTableRows({
             'scope': name,
@@ -283,11 +281,11 @@ class Relation {
         }).then(balance => {
             callback(null, JSON.stringify({'result': balance.rows}));
         }).catch(error => {
-            callback(JSON.stringify({'error': error}));
+            callback(JSON.stringify({'error': error.message || error}));
         });
     }
 
-    get_relation(name, callback = log) {
+    get_relation (name, callback = log) {
         const eos = Eos(_config());
         eos.getTableRows({
             'scope': name,
@@ -297,23 +295,23 @@ class Relation {
         }).then(balance => {
             callback(null, JSON.stringify({'result': balance.rows}));
         }).catch(error => {
-            callback(JSON.stringify({'error': error}));
+            callback(JSON.stringify({'error': error.message || error}));
         });
     }
 }
 
-function relation(name) {
+function relation (name) {
     return new Relation(name);
 }
 
 module.exports = {
-    random_key: randomKey,
-    pvk_to_puk: pvkToPuk,
+    random_key,
+    pvk_to_puk,
     sign: sign,
-    get_account: getAccount,
-    get_balance: getBalance,
-    get_key_accounts: getKeyAccounts,
-    get_currency_stats: getCurrencyStats,
-    transfer: transfer,
-    relation: relation
+    get_account,
+    get_balance,
+    get_key_accounts,
+    get_currency_stats,
+    transfer,
+    relation
 };
