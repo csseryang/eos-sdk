@@ -119,16 +119,174 @@ function transfer(from, to, amount, memo, pvk, callback = log) {
     });
 }
 
-function test() {
-    const eos = Eos(_config());
-    eos.contract('relation')
-        .then((contract) => {
-            contract.insertinvent({sender: "richard", item: "laptop"},
-                {scope: 'inventory', authorization: ['richard']})
-        })
+class Relation {
+    constructor(name) {
+        this.name = name;
+    }
+
+    create_obj(name, type, icon, uri, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": name,
+                    "type": type,
+                    "icon": icon,
+                    "uri": uri
+                };
+
+                const option = {
+                    'authorization': [name + `@active`],
+                };
+                return contract.createobj(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                console.log(error.message);
+                callback(JSON.stringify({'error': error}));
+            })
+    }
+
+    request(name, apply, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": name,
+                    "apply": apply,
+                };
+                const option = {
+                    'authorization': [name + `@active`],
+                };
+
+                return contract.apply(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                console.log(error.message);
+                callback(JSON.stringify({'error': error}));
+            })
+    }
+
+    add(from, to, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": from,
+                    "addname": to,
+                };
+                const option = {
+                    'authorization': [from + `@active`],
+                };
+
+                return contract.addname(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                console.log(error.message);
+                callback(JSON.stringify({'error': error}));
+            })
+    }
+
+    delete(from, to, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": from,
+                    "deletename": to,
+                };
+                const option = {
+                    'authorization': [from + `@active`],
+                };
+
+                return contract.deletename(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                console.log(error.message);
+                callback(JSON.stringify({'error': error}));
+            })
+    }
+
+    cancel(from, to, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": from,
+                    "cancel": to,
+                };
+                const option = {
+                    'authorization': [from + `@active`],
+                };
+
+                return contract.cancel(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                console.log(error.message);
+                callback(JSON.stringify({'error': error}));
+            })
+    }
+
+    get_apply(name, callback = log) {
+        const eos = Eos(_config());
+        eos.getTableRows({
+            'scope': name,
+            'code': this.name,
+            'table': 'apply',
+            'json': true
+        }).then(balance => {
+            callback(null, JSON.stringify({'result': balance.rows}));
+        }).catch(error => {
+            callback(JSON.stringify({'error': error}));
+        });
+    }
+
+    get_pending(name, callback = log) {
+        const eos = Eos(_config());
+        eos.getTableRows({
+            'scope': name,
+            'code': this.name,
+            'table': 'pending',
+            'json': true
+        }).then(balance => {
+            callback(null, JSON.stringify({'result': balance.rows}));
+        }).catch(error => {
+            callback(JSON.stringify({'error': error}));
+        });
+    }
+
+    get_relation(name, callback = log) {
+        const eos = Eos(_config());
+        eos.getTableRows({
+            'scope': name,
+            'code': this.name,
+            'table': 'object',
+            'json': true
+        }).then(balance => {
+            callback(null, JSON.stringify({'result': balance.rows}));
+        }).catch(error => {
+            callback(JSON.stringify({'error': error}));
+        });
+    }
 }
 
-const eosApi = Eos(_config());
+function relation(name) {
+    return new Relation(name);
+}
 
 module.exports = {
     random_key: randomKey,
@@ -139,5 +297,5 @@ module.exports = {
     get_key_accounts: getKeyAccounts,
     get_currency_stats: getCurrencyStats,
     transfer: transfer,
-    eosApi: eosApi,
+    relation: relation
 };
