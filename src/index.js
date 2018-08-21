@@ -1,5 +1,6 @@
 'use strict';
 
+require('babel-polyfill');
 const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
 const settings = require('./config');

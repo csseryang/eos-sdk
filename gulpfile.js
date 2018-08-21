@@ -14,9 +14,9 @@ gulp.task('build-js', function () {
         })
         .transform(babelify, {
                 "presets": ["env"],
-                "plugins": [
-                    ["transform-runtime"],
-                ]
+                // "plugins": [
+                //     ["transform-runtime"],
+                // ]
             }
         )
         .bundle()

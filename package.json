@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/qding-bot/eos-sdk#readme",
   "dependencies": {
-    "babel-runtime": "~6.26.0",
     "babel-polyfill": "~6.26.0",
     "eosjs": "~16.0.2",
     "eosjs-ecc": "~4.0.3"
