@@ -124,7 +124,7 @@ class Relation {
         this.name = name;
     }
 
-    create_obj(name, type, icon, uri, pvk, callback = log) {
+    register(name, type, icon, uri, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -144,12 +144,11 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                console.log(error.message);
-                callback(JSON.stringify({'error': error}));
+                callback(JSON.stringify({'error': error.message || error}));
             })
     }
 
-    request(name, apply, pvk, callback = log) {
+    apply(name, apply, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -167,12 +166,11 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                console.log(error.message);
                 callback(JSON.stringify({'error': error}));
             })
     }
 
-    add(from, to, pvk, callback = log) {
+    accept(from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -190,7 +188,28 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                console.log(error.message);
+                callback(JSON.stringify({'error': error.message}));
+            })
+    }
+
+    cancel(from, to, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": from,
+                    "cancel": to,
+                };
+                const option = {
+                    'authorization': [from + `@active`],
+                };
+
+                return contract.cancel(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
                 callback(JSON.stringify({'error': error}));
             })
     }
@@ -213,33 +232,10 @@ class Relation {
                 callback(null, {'result': result});
             })
             .catch(error => {
-                console.log(error.message);
-                callback(JSON.stringify({'error': error}));
+                callback(JSON.stringify({'error': error.message}));
             })
     }
 
-    cancel(from, to, pvk, callback = log) {
-        const eos = Eos(_config(pvk));
-        eos.contract(this.name)
-            .then((contract) => {
-                const param = {
-                    "name": from,
-                    "cancel": to,
-                };
-                const option = {
-                    'authorization': [from + `@active`],
-                };
-
-                return contract.cancel(param, option);
-            })
-            .then(result => {
-                callback(null, {'result': result});
-            })
-            .catch(error => {
-                console.log(error.message);
-                callback(JSON.stringify({'error': error}));
-            })
-    }
 
     get_apply(name, callback = log) {
         const eos = Eos(_config());
