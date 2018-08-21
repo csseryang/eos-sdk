@@ -3,6 +3,56 @@
 # EOS-SDK
 JavaScript Helper for mobile platforms
 
+## Basic
+### Random Key
+Generate random keys
+```js
+EosSdk.random_key()
+```
+
+### Private Key To Public Key
+Generate public key from private key
+```js
+EosSdk.pvk_to_puk('privateKey')
+```
+* **privateKey**: private key
+
+### Sign
+Sign a string using private key
+```js
+EosSdk.sign('string', 'privateKey')
+```
+* **string**: string to be signed
+* **privateKey**: private key
+
+### Get account
+Get account info by account name
+```js
+EosSdk.get_account('name')
+```
+* **name**: account name
+
+### Get balance
+Get account balance
+```js
+EosSdk.get_balance('name')
+```
+* **name**: account name
+
+### Get key accounts
+Get account name(s) by public key
+```js
+EosSdk.get_key_accounts('publicKey')
+```
+* **publicKey**: public key
+
+### Get currency status
+Get token info by symbol name
+```js
+EosSdk.get_currency_stats('symbol')
+```
+* **symbol**: token symbol, like 'SYS'
+
 ## Relation contract
 ### Register
 Register new user in contract
