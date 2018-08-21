@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/EOSIO/eosjs.svg?branch=master)](https://travis-ci.com/qding-bot/eos-sdk)
 
 # EOS-SDK
-js Helper for mobile platforms
+JavaScript Helper for mobile platforms
 
 ## Relation contract
 ### Register
@@ -27,7 +27,7 @@ EosSdk.relation('contractName').apply('from', 'to', 'privateKey')
 * **privateKey**: private key
 
 ### Cancel
-Cancel a request to someone
+Cancel a request
 ```js
 EosSdk.relation('contractName').cancel('from', 'to', 'privateKey')
 ```
@@ -37,23 +37,33 @@ EosSdk.relation('contractName').cancel('from', 'to', 'privateKey')
 * **privateKey**: private key
 
 ### Accept
-Accept incoming request
+Accept an incoming request
 ```js
 EosSdk.relation('contractName').accept('from', 'to', 'privateKey')
 ```
 * **contractName**: contract name. 
-* **from**: account name of recipient
+* **from**: account name
+* **to**: account name of applicant
+* **privateKey**: private key
+
+### Reject
+Reject an incoming request
+```js
+EosSdk.relation('contractName').reject('from', 'to', 'privateKey')
+```
+* **contractName**: contract name. 
+* **from**: account name
 * **to**: account name of applicant
 * **privateKey**: private key
 
 ### Delete
-Delete a friend
+Delete a relation
 ```js
 EosSdk.relation('contractName').delete('from', 'to', 'privateKey')
 ```
 * **contractName**: contract name. 
 * **from**: account name
-* **to**: account name of friend to be deleted
+* **to**: account name of relation to be deleted
 * **privateKey**: private key
 
 ### Get application list

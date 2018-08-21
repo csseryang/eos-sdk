@@ -192,6 +192,28 @@ class Relation {
             })
     }
 
+    reject(from, to, pvk, callback = log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    "name": from,
+                    "rejectname": to,
+                };
+                const option = {
+                    'authorization': [from + `@active`],
+                };
+
+                return contract.rejectname(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                callback(JSON.stringify({'error': error.message}));
+            })
+    }
+
     cancel(from, to, pvk, callback = log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
