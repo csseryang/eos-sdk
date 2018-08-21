@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/EOSIO/eosjs.svg?branch=master)](https://travis-ci.com/qding-bot/eos-sdk)
 
 # EOS-SDK
-JavaScript Helper for mobile platforms
+JavaScript helper library for mobile platforms
 
 ## Basic
 ### Random Key
@@ -77,7 +77,7 @@ EosSdk.relation('contractName').apply('from', 'to', 'privateKey')
 * **privateKey**: private key
 
 ### Cancel
-Cancel a request
+Cancel a outgoing request
 ```js
 EosSdk.relation('contractName').cancel('from', 'to', 'privateKey')
 ```
@@ -117,7 +117,7 @@ EosSdk.relation('contractName').delete('from', 'to', 'privateKey')
 * **privateKey**: private key
 
 ### Get application list
-Get (outgoing) request list
+Get (outgoing) requests
 ```js
 EosSdk.relation('contractName').get_apply('name')
 ```
@@ -125,7 +125,7 @@ EosSdk.relation('contractName').get_apply('name')
 * **name**: account name
 
 ### Get pending list
-Get (incoming) request list
+Get (incoming) requests
 ```js
 EosSdk.relation('contractName').get_pending('name')
 ```
@@ -133,7 +133,7 @@ EosSdk.relation('contractName').get_pending('name')
 * **name**: account name
 
 ### Get relation list
-Get all relationship
+Get all confirmed relationships
 ```js
 EosSdk.relation('contractName').get_relation('name')
 ```
