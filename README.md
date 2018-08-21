@@ -7,7 +7,7 @@ JavaScript Helper for mobile platforms
 ### Register
 Register new user in contract
 ```js
-EosSdk.relation('contractName').create_obj('name', type, 'icon', 'uri', 'privateKey')
+EosSdk.relation('contractName').register('name', type, 'icon', 'uri', 'privateKey')
 ```
 * **contractName**: contract name. 
 * **name**: account name
