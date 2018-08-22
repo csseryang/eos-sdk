@@ -53,6 +53,18 @@ EosSdk.get_currency_stats('symbol')
 ```
 * **symbol**: token symbol, like 'SYS'
 
+
+### Transfer
+Transfer tokens to another account
+```js
+EosSdk.transfer('from', 'to', 'memo', 'privateKey')
+```
+* **from**: account name. 
+* **to**: recipient account name
+* **memo**: message for recipient
+* **privateKey**: private key
+
+
 ## Relation contract
 ### Register
 Register new user in contract
