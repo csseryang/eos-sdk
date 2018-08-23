@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 const EosSdk = require('../src/index.js');
 const expect = require('chai').expect;
 
@@ -6,7 +7,7 @@ describe('Test Random key generation: ', function () {
     it('Key should be valid', function () {
         EosSdk.random_key((error, result) => {
             expect(result).to.be.a('string');
-        })
+        });
     });
 
     it('Key transfer should be correct', function () {
@@ -40,12 +41,19 @@ describe('Test Random key generation: ', function () {
         });
     });
 
-    // const user_a = "g1fciq4auixg";
-    // const pk_a = '5KJH24PhJrWvQxugGfVYnbeiBEAbzKUpreDmHNfCi3EyPyAZfmP';
-    // const user_b = "xzvbupxsbeam";
-    // const pk_b = '5JA8ghMZ8gNpoFre8CqFjbLS2rQtynpjCGueAH6RXz7SC5MTrRk';
-    // const relation = EosSdk.relation('cybchain');
-    //
+    const user_a = "g1fciq4auixg";
+    const pk_a = '5KJH24PhJrWvQxugGfVYnbeiBEAbzKUpreDmHNfCi3EyPyAZfmP';
+    const user_b = "xzvbupxsbeam";
+    const pk_b = '5JA8ghMZ8gNpoFre8CqFjbLS2rQtynpjCGueAH6RXz7SC5MTrRk';
+    const relation = EosSdk.relation('cybchain');
+
+    it('get uri', function () {
+        relation.get_uri_list(['g1fciq4auixg', 'xzvbupxsbeam'], (error, result) => {
+            console.log(result);
+        });
+    });
+
+
     // it('Test relation: apply', function () {
     //     relation.apply(user_a, user_b, pk_a, (error, result) => {
     //         expect(error).to.be.equal(null);

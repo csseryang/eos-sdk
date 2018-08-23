@@ -106,6 +106,25 @@ function get_currency_stats (symbol, code = 'eosio.token', callback = log) {
     });
 }
 
+function _promised (instance, func) {
+    let mins = instance;
+    let my_func = func.bind(mins);
+
+    function get_promise (args) {
+        return new Promise((resolve, reject) => {
+            my_func(args, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    return get_promise;
+}
+
 // Transfer currency from one account to another
 // Amount must have the same decimal places as token's supply/max_supply.
 // e.g. SYS's max_supply = 10000.0000, then '1.0000 SYS' is legal while '1 SYS' is illegal
@@ -299,6 +318,19 @@ class Relation {
             callback(JSON.stringify({'error': error.message || error}));
         });
     }
+
+    get_uri_list (account_names, callback = log) {
+        Promise.all(account_names.map(_promised(this, this.get_relation)))
+            .then((results) => {
+                let processed = results.map(x => JSON.parse(x).result[0]).map(x => {
+                    return {name: x.name, uri: x.uri};
+                }).concat();
+                callback(null, JSON.stringify({'result': processed}));
+            })
+            .catch(error => {
+                callback(JSON.stringify({'error': error.message || error}));
+            });
+    }
 }
 
 function relation (name) {
@@ -308,7 +340,7 @@ function relation (name) {
 module.exports = {
     random_key,
     pvk_to_puk,
-    sign: sign,
+    sign,
     get_account,
     get_balance,
     get_key_accounts,

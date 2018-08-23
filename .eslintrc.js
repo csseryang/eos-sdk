@@ -7,15 +7,16 @@ module.exports = {
         sourceType: 'module'
     },
     env: {
-        browser: true,
+        node: true,
+        browser: false,
     },
-    // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
+
     extends: 'standard',
-    // required to lint *.vue files
 
     // add your custom rules here
     'rules': {
         "camelcase": [0],
+        "files": ["src/*.js"],
         "semi": [2, "always"],
         "indent": [2, 4],
         // allow paren-less arrow functions

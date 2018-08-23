@@ -151,3 +151,13 @@ EosSdk.relation('contractName').get_relation('name')
 ```
 * **contractName**: contract name. 
 * **name**: account name
+
+
+### Get URI list
+Get list of uri's by a list of account names
+Might return error if user is not registered
+```js
+EosSdk.relation('contractName').get_uri_list(names)
+```
+* **contractName**: contract name. 
+* **names**: list of account name. e.g. ['g1fciq4auixg', 'xzvbupxsbeam']
