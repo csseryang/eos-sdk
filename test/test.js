@@ -48,52 +48,90 @@ describe('Test Random key generation: ', function () {
     //
     // it('Test relation: apply', function () {
     //     relation.apply(user_a, user_b, pk_a, (error, result) => {
-    //         expect(JSON.parse(error)).to.be.equal(null);
+    //         expect(error).to.be.equal(null);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_apply(user_a, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].applies).to.contains(user_b);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_apply(user_a, (error, result) => {
+    //         console.log(result);
+    //         expect(error).to.be.equal(null);
+    //         expect(JSON.parse(result).result[0].applies).to.contains(user_b);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_pending(user_a, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].pendings).to.contains(user_b);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_pending(user_a, (error, result) => {
+    //         expect(error).to.be.equal(null);
+    //         expect(JSON.parse(result).result[0].pendings).to.not.contains(user_b);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_apply(user_b, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].pendings).to.contains(user_a);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_apply(user_b, (error, result) => {
+    //         expect(JSON.parse(result).result[0].applies).to.not.contains(user_a);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_pending(user_b, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].pendings).to.contains(user_a);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_pending(user_b, (error, result) => {
+    //         console.log(result);
+    //         expect(JSON.parse(result).result[0].pendings).to.contains(user_a);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_relation(user_a, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].pendings).to.not.contains(user_a);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_relation(user_a, (error, result) => {
+    //         expect(JSON.parse(result).result[0].property).to.not.contains(user_a);
+    //     });
+    // });
     //
-    //         it('Test relation: get apply and pending info', function () {
-    //             relation.get_relation(user_b, (error, result) => {
-    //                 expect(JSON.parse(result).result[0].pendings).to.not.contains(user_a);
-    //             });
-    //         });
+    // it('Test relation: get apply and pending info -- apply', function () {
+    //     relation.get_relation(user_b, (error, result) => {
+    //         expect(JSON.parse(result).result[0].property).to.not.contains(user_a);
     //     });
     // });
     //
     // it('Test relation: reject', function () {
     //     relation.reject(user_b, user_a, pk_b, (error, result) => {
-    //         expect(JSON.parse(error)).to.be.equal(null);
+    //         expect(error).to.be.equal(null);
     //     });
     // });
-
+    //
+    // it('Test relation: accept', function () {
+    //     relation.accept(user_b, user_a, pk_b, (error, result) => {
+    //         expect(error).to.be.equal(null);
+    //     });
+    // });
+    //
+    // it('get apply and pending info -- accept', function () {
+    //     relation.get_apply(user_a, (error, result) => {
+    //         console.log(result);
+    //         expect(JSON.parse(result).result[0].applies).to.not.contains(user_b);
+    //     });
+    // });
+    //
+    // it('get apply and pending info -- accept', function () {
+    //     relation.get_pending(user_b, (error, result) => {
+    //         console.log(result);
+    //         expect(JSON.parse(result).result[0].pendings).to.not.contains(user_a);
+    //     });
+    // });
+    //
+    // it('get apply and pending info -- accept', function () {
+    //     relation.get_relation(user_a, (error, result) => {
+    //         console.log(result);
+    //         expect(JSON.parse(result).result[0].property).to.be.contains(user_b);
+    //     });
+    // });
+    //
+    // it('get apply and pending info -- accept', function () {
+    //     relation.get_relation(user_b, (error, result) => {
+    //         console.log(result);
+    //         expect(JSON.parse(result).result[0].property).to.be.contains(user_a);
+    //     });
+    // });
+    //
     //
     // it('Test relation: delete', function () {
     //     relation.delete(user_b, user_a, pk_b, (error, result) => {
@@ -101,44 +139,16 @@ describe('Test Random key generation: ', function () {
     //         expect(JSON.parse(error)).to.be.equal(null);
     //     });
     // });
-
-    // it('Test relation: apply', function () {
-    //     relation.apply(user_a, user_b, pk_a, (error, result) => {
-    //         expect(JSON.parse(error)).to.be.equal(null);
+    //
+    // it('Test relation: get apply and pending info -- delete', function () {
+    //     relation.get_relation(user_a, (error, result) => {
+    //         expect(JSON.parse(result).result[0].property).to.not.contains(user_b);
     //     });
     // });
     //
-    // it('Test relation: accept', function () {
-    //     relation.accept(user_b, user_a, pk_b, (error, result) => {
-    //         expect(JSON.parse(error)).to.be.equal(null);
-    //     });
-    // });
-    //
-    // it('Test relation: get_apply', function () {
-    //     relation.get_apply(user_a, (error, result) => {
-    //         console.log(result);
-    //         expect(JSON.parse(result).result[0].applies).to.not.contains(user_b);
-    //     });
-    // });
-    //
-    // it('Test relation: get_pending', function () {
-    //     relation.get_pending(user_b, (error, result) => {
-    //         console.log(result);
-    //         expect(JSON.parse(result).result[0].pendings).to.not.contains(user_a);
-    //     });
-    // });
-    //
-    // it('Test relation: get_relation', function () {
-    //     relation.get_apply(user_a, (error, result) => {
-    //         console.log(result);
-    //         expect(JSON.parse(result).result[0].relations).to.be.contains(user_b);
-    //     });
-    // });
-    //
-    // it('Test relation: get_relation', function () {
-    //     relation.get_pending(user_b, (error, result) => {
-    //         console.log(result);
-    //         expect(JSON.parse(result).result[0].pendings).to.be.contains(user_a);
+    // it('Test relation: get apply and pending info -- delete', function () {
+    //     relation.get_relation(user_b, (error, result) => {
+    //         expect(JSON.parse(result).result[0].property).to.not.contains(user_a);
     //     });
     // });
 });
