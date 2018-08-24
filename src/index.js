@@ -4,6 +4,7 @@ require('babel-polyfill');
 const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
 const settings = require('./config');
+const util = require('util');
 
 const config = settings.config;
 
@@ -111,15 +112,7 @@ function _promised (instance, func) {
     let my_func = func.bind(mins);
 
     function get_promise (args) {
-        return new Promise((resolve, reject) => {
-            my_func(args, (error, result) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
+        return util.promisify(my_func)(args);
     }
 
     return get_promise;
@@ -319,7 +312,7 @@ class Relation {
         });
     }
 
-    get_uri_list (account_names, callback = log) {
+    get_info_list (account_names, callback = log) {
         Promise.all(account_names.map(_promised(this, this.get_relation)))
             .then((results) => {
                 let processed = results.map(x => JSON.parse(x).result[0]).map(x => {

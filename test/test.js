@@ -48,7 +48,7 @@ describe('Test Random key generation: ', function () {
     const relation = EosSdk.relation('cybchain');
 
     it('get uri', function () {
-        relation.get_uri_list(['g1fciq4auixg', 'xzvbupxsbeam'], (error, result) => {
+        relation.get_info_list(['g1fciq4auixg', 'xzvbupxsbeam'], (error, result) => {
             console.log(result);
         });
     });
