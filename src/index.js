@@ -42,7 +42,7 @@ function _read_table (name, code, table, callback = log) {
 }
 
 /**
- * A module for adding two values.
+ * JavaScript helper library for mobile platforms
  * @module EosSdk
  */
 
