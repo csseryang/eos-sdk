@@ -28,7 +28,7 @@ function log (error, result) {
 }
 
 function _read_table (name, code, table, callback = log) {
-    const eos = Eos();
+    const eos = Eos(_config());
     eos.getTableRows({
         'scope': name,
         'code': code,
