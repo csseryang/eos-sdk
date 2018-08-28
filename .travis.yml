@@ -7,8 +7,8 @@ script:
 
 before_deploy:
   npm run build &&
-  cp index.html dist/index.html &&
-  cp README.md dist/README.md
+  npm run docs &&
+  cp index.html dist/index.html
 
 deploy:
   provider: pages

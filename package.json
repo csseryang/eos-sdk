@@ -5,7 +5,8 @@
   "scripts": {
     "build": "gulp build-js",
     "lint": "eslint --ext .js src",
-    "test": "mocha test/test.js"
+    "test": "mocha test/test.js",
+    "docs": "jsdoc2md src/index.js > dist/README.md"
   },
   "repository": {
     "type": "git",
@@ -22,11 +23,13 @@
   "homepage": "https://github.com/qding-bot/eos-sdk#readme",
   "dependencies": {
     "babel-polyfill": "~6.26.0",
+    "big-integer": "^1.6.34",
     "eosjs": "~16.0.2",
     "eosjs-ecc": "~4.0.3",
     "gulp-uglify": "^3.0.1"
   },
   "devDependencies": {
+    "jsdoc-to-markdown": "^4.0.1",
     "eslint": "^5.4.0",
     "escope": "^3.6.0",
     "gulp": "^3.9.1",
