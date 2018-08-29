@@ -54,6 +54,16 @@ function _read_table (name, code, table, callback = _log) {
     });
 }
 
+function _promised (instance, func) {
+    let my_func = func.bind(instance);
+
+    function get_promise (args) {
+        return util.promisify(my_func)(args);
+    }
+
+    return get_promise;
+}
+
 /**
  * JavaScript helper library for mobile platforms
  * @module EosSdk
@@ -163,17 +173,6 @@ function get_currency_stats (symbol, code = 'eosio.token', callback = _log) {
         callback(JSON.stringify({'error': error.message || error}));
     });
 }
-
-// function _promised (instance, func) {
-//     let mins = instance;
-//     let my_func = func.bind(mins);
-//
-//     function get_promise (args) {
-//         return util.promisify(my_func)(args);
-//     }
-//
-//     return get_promise;
-// }
 
 /**
  * Transfer currency from one account to another
@@ -638,6 +637,22 @@ class Relation {
     }
 
     /**
+     * Get user info by a list of account names
+     * @param account_names {list} - Account names
+     * @param {function} [callback] - Callback to execute (Optional)
+     */
+    get_info_list (account_names, callback = log) {
+        Promise.all(account_names.map(_promised(this, this.get_info)))
+            .then((results) => {
+                let processed = results.map(x => JSON.parse(x).result[0]).concat();
+                callback(null, JSON.stringify({'result': processed}));
+            })
+            .catch(error => {
+                callback(JSON.stringify({'error': error.message || error}));
+            });
+    }
+
+    /**
      * Get outgoing request list
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
@@ -683,7 +698,8 @@ class Relation {
     }
 }
 
-module.exports = {
+module
+    .exports = {
     random_key,
     pvk_to_puk,
     sign,

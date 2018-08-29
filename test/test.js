@@ -62,6 +62,9 @@ describe('Test Random key generation: ', function () {
         const user_b = "kjnz5u3yqbld";
         const pk_b = '5J846ZRnpmKJfJtm1tDxT98Y193ihmuAqiEitAfFuMry6YZ7p7k';
 
+        const res = await relation.get_info_list([user_a, user_b]);
+        console.log(res);
+
         try {
             await relation.register(user_a, 1, 'uri1', 'extra1', pk_a);
             await relation.register(user_b, 1, 'uri2', 'extra2', pk_b);
