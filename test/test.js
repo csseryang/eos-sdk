@@ -2,7 +2,7 @@
 
 const EosSdk = require('../src/index.js');
 const expect = require('chai').expect;
-const bigInt = require("big-integer");
+
 
 describe('Test Random key generation: ', function () {
     it('Key should be valid', function () {
@@ -51,21 +51,20 @@ describe('Test Random key generation: ', function () {
         });
     });
 
-    const relation = EosSdk.relation('dating111111').promisified();
+    const relation = EosSdk.relation('family111112').promisified();
 
     it('Test relation', async function () {
         this.timeout(5000000);
 
-        const user_a = "w25nw1hbutpm";
-        const pk_a = '5KX6bssCsfgrPX3vrHqnbg87dKZzAiQhL5crq8a9nnk4RPj8PKd';
+        const user_a = "e4zrp3lxow3h";
+        const pk_a = '5KckAqraw3PNGpkN12iTiNBC9hTgjtm9jifCp135baorvincXbr';
 
-        const user_b = "xnswwo4fpqnz";
-        const pk_b = '5KSXtJtNTxtGLr4VZ98kaQo5bgQNYed3Z7aNqHFMPDvJrsukMoF';
+        const user_b = "kjnz5u3yqbld";
+        const pk_b = '5J846ZRnpmKJfJtm1tDxT98Y193ihmuAqiEitAfFuMry6YZ7p7k';
 
         try {
             await relation.register(user_a, 1, 'uri1', 'extra1', pk_a);
             await relation.register(user_b, 1, 'uri2', 'extra2', pk_b);
-
 
         } catch (e) {
             console.error(e);
@@ -74,7 +73,6 @@ describe('Test Random key generation: ', function () {
 
             let r2 = await relation.get_info(user_b);
             console.log(r2);
-
         }
 
         try {
@@ -185,36 +183,51 @@ describe('Test Random key generation: ', function () {
         }
 
         try {
-            await relation.send_message(user_a, user_b, 'hello', pk_a);
+            // Send 3 messages
+            await relation.send_message(user_a, user_b, 'hello1', pk_a);
+            await relation.send_message(user_a, user_b, 'hello2', pk_a);
+            await relation.send_message(user_a, user_b, 'hello3', pk_a);
 
             let outbox_content = await relation.get_outbox(user_a);
             let inbox_content = await relation.get_inbox(user_b);
-
             console.log(outbox_content);
             console.log(inbox_content);
+
             expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.not.empty;
             expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.not.empty;
+
             console.log('send message successful');
 
-            let out_id = JSON.parse(outbox_content).result[0].msgid.substring(2);
-            const r = out_id.match(/../g).reverse().join('');
-            const out_max = bigInt(r, 16).toString(10);
+            // Delete the last message
+            let out_id = JSON.parse(outbox_content).result[0].msgid;
+            let in_id = JSON.parse(inbox_content).result[0].msgid;
 
-            let in_id = JSON.parse(inbox_content).result[0].msgid.substring(2);
-            const r2 = in_id.match(/../g).reverse().join('');
-            const in_max = bigInt(r2, 16).toString(10);
-
-            await relation.delete_outbox(user_a, out_max, pk_a);
-            await relation.delete_inbox(user_b, in_max, pk_b);
+            await relation.delete_out_message(user_a, out_id, pk_a);
+            await relation.delete_in_message(user_b, in_id, pk_b);
 
             outbox_content = await relation.get_outbox(user_a);
             inbox_content = await relation.get_inbox(user_b);
             console.log(outbox_content);
             console.log(inbox_content);
 
+            expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.not.empty;
+            expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.not.empty;
+
+            console.log('delete message successful');
+
+            // Delete all messages
+            out_id = JSON.parse(outbox_content).result[0].msgid;
+            in_id = JSON.parse(inbox_content).result[0].msgid;
+
+            await relation.delete_outbox(user_a, out_id, pk_a);
+            await relation.delete_inbox(user_b, in_id, pk_b);
+
+            outbox_content = await relation.get_outbox(user_a);
+            inbox_content = await relation.get_inbox(user_b);
+
             expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.empty;
             expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.empty;
-            console.log('delete message successful');
+            console.log('delete box successful');
 
         } catch (error) {
             console.log(error);

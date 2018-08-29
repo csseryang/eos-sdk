@@ -11,8 +11,6 @@ module.exports = {
         browser: false,
     },
 
-    extends: 'standard',
-
     // add your custom rules here
     'rules': {
         "camelcase": [0],

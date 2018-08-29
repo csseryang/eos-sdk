@@ -5,6 +5,7 @@ const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
 const util = require('util');
 const settings = require('./config');
+const bigInt = require('big-integer');
 
 const config = settings.config;
 
@@ -19,7 +20,7 @@ function _config (pvk) {
     return cfg;
 }
 
-function log (error, result) {
+function _log (error, result) {
     if (result !== undefined) {
         console.log(result);
     } else {
@@ -27,7 +28,19 @@ function log (error, result) {
     }
 }
 
-function _read_table (name, code, table, callback = log) {
+function _parse_bigint (id) {
+    if (typeof id === 'number') {
+        return id;
+    }
+
+    if (id.startsWith('0x')) {
+        id = id.substring(2);
+    }
+    const r = id.match(/../g).reverse().join('');
+    return bigInt(r, 16).toString(10);
+}
+
+function _read_table (name, code, table, callback = _log) {
     const eos = Eos(_config());
     eos.getTableRows({
         'scope': name,
@@ -50,7 +63,7 @@ function _read_table (name, code, table, callback = log) {
  * Generate random private key/ public key pair
  * @param {function} [callback] - Callback to execute (Optional)
  */
-function random_key (callback = log) {
+function random_key (callback = _log) {
     ecc.randomKey().then(pvk => {
         const puk = ecc.privateToPublic(pvk);
         callback(null, JSON.stringify({'privateKey': pvk, 'publicKey': puk}));
@@ -64,7 +77,7 @@ function random_key (callback = log) {
  * @param pvk {string} - Private key
  * @param [callback] {function} - Callback to execute (Optional)
  */
-function pvk_to_puk (pvk, callback = log) {
+function pvk_to_puk (pvk, callback = _log) {
     const puk = ecc.privateToPublic(pvk);
     try {
         callback(null, JSON.stringify({'publicKey': puk}));
@@ -79,7 +92,7 @@ function pvk_to_puk (pvk, callback = log) {
  * @param pvk {string} Private key
  * @param [callback] {function} - Callback to execute (Optional)
  */
-function sign (s, pvk, callback = log) {
+function sign (s, pvk, callback = _log) {
     try {
         const signature = ecc.sign(s, pvk);
         callback(null, JSON.stringify({'signature': signature}));
@@ -93,7 +106,7 @@ function sign (s, pvk, callback = log) {
  * @param name {string} Account name
  * @param [callback] {function} - Callback to execute (Optional)
  */
-function get_account (name, callback = log) {
+function get_account (name, callback = _log) {
     const eos = Eos(_config());
     eos.getAccount(name).then(result => {
         callback(null, JSON.stringify({'account': result}));
@@ -105,10 +118,10 @@ function get_account (name, callback = log) {
 /**
  *
  * @param name {string} - Account name as index
- * @param [code] {string}- Contract account name. default is 'eosio.token'
+ * @param [code] {string}- Contract account name (Optional)
  * @param [callback] {function} - Callback to execute (Optional)
  */
-function get_balance (name, code = 'eosio.token', callback = log) {
+function get_balance (name, code = 'eosio.token', callback = _log) {
     const eos = Eos(_config());
     eos.getTableRows({
         'scope': name,
@@ -127,7 +140,7 @@ function get_balance (name, code = 'eosio.token', callback = log) {
  * @param puk {string} - Public key
  * @param {function} [callback] - Callback to execute (Optional)
  */
-function get_key_accounts (puk, callback = log) {
+function get_key_accounts (puk, callback = _log) {
     const eos = Eos(_config());
     eos.getKeyAccounts(puk).then(names => {
         callback(null, JSON.stringify({'names': names}));
@@ -142,7 +155,7 @@ function get_key_accounts (puk, callback = log) {
  * @param [code] {string} - Contract owner name (Optional)
  * @param [callback] {function} - Callback to execute (Optional)
  */
-function get_currency_stats (symbol, code = 'eosio.token', callback = log) {
+function get_currency_stats (symbol, code = 'eosio.token', callback = _log) {
     const eos = Eos(_config());
     eos.getCurrencyStats(code, symbol).then(stats => {
         callback(null, JSON.stringify({'stats': stats}));
@@ -162,17 +175,16 @@ function get_currency_stats (symbol, code = 'eosio.token', callback = log) {
 //     return get_promise;
 // }
 
-
 /**
  * Transfer currency from one account to another
  * @param {string} from - account name
  * @param {string} to - recipient account name
  * @param {string} amount - amount to transfer. must have the same decimal places as token's supply/max_supply. e.g. SYS's max_supply = 10000.0000, then '1.0000 SYS' is legal while '1 SYS' is illegal
- * @param {string} memo - memo (Optional)
+ * @param {string} memo - memo
  * @param {string} pvk - private key
  * @param {function} [callback] - Callback to execute (Optional)
  */
-function transfer (from, to, amount, memo = '', pvk, callback = log) {
+function transfer (from, to, amount, memo, pvk, callback = _log) {
     const eos = Eos(_config(pvk));
     eos.transfer(from, to, amount, memo).then(result => {
         callback(null, {'result': result});
@@ -180,7 +192,6 @@ function transfer (from, to, amount, memo = '', pvk, callback = log) {
         callback(JSON.stringify({'error': error.message || error}));
     });
 }
-
 
 function relation (name) {
     return new Relation(name);
@@ -201,7 +212,7 @@ class Relation {
     promisified () {
         let fnNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
         fnNames.forEach((fnName) => {
-            this[fnName] = util.promisify(this[fnName])
+            this[fnName] = util.promisify(this[fnName]);
         });
         return this;
     }
@@ -215,7 +226,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    register (name, type, uri, extra, pvk, callback = log) {
+    register (name, type, uri, extra, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -246,7 +257,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    set_uri (name, uri, pvk, callback = log) {
+    set_uri (name, uri, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -275,7 +286,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    set_type (name, type, pvk, callback = log) {
+    set_type (name, type, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -304,7 +315,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    set_extra (name, extra, pvk, callback = log) {
+    set_extra (name, extra, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -333,7 +344,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    apply (from, to, pvk, callback = log) {
+    apply (from, to, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -362,7 +373,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    accept (from, to, pvk, callback = log) {
+    accept (from, to, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -391,7 +402,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    reject (from, to, pvk, callback = log) {
+    reject (from, to, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -419,7 +430,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    cancel (from, to, pvk, callback = log) {
+    cancel (from, to, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -448,7 +459,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    delete (from, to, pvk, callback = log) {
+    delete (from, to, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -478,7 +489,7 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    send_message (from, to, message, pvk, callback = log) {
+    send_message (from, to, message, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
@@ -508,13 +519,13 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    delete_inbox (name, id, pvk, callback = log) {
+    delete_inbox (name, id, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
                     'name': name,
-                    'id': id
+                    'id': _parse_bigint(id)
                 };
                 const option = {
                     'authorization': [name + `@active`]
@@ -537,13 +548,13 @@ class Relation {
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    delete_outbox (name, id, pvk, callback = log) {
+    delete_outbox (name, id, pvk, callback = _log) {
         const eos = Eos(_config(pvk));
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
                     'name': name,
-                    'id': id
+                    'id': _parse_bigint(id)
                 };
                 const option = {
                     'authorization': [name + `@active`]
@@ -560,11 +571,69 @@ class Relation {
     }
 
     /**
+     * Delete one message by id in InBox
+     * @param name {string} - Account name
+     * @param id {string} Message id to delete
+     * @param pvk {string} - Private key. Must match with name
+     * @param {function} [callback] - Callback to execute (Optional)
+     */
+    delete_in_message (name, id, pvk, callback = _log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    'name': name,
+                    'id': _parse_bigint(id)
+                };
+                const option = {
+                    'authorization': [name + `@active`]
+                };
+
+                return contract.deleteinmsg(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                callback(JSON.stringify({'error': error.message || error}));
+            });
+    }
+
+    /**
+     * Delete one message by id in OutBox
+     * @param name {string} - Account name
+     * @param id {string/number} Message id to delete
+     * @param pvk {string} - Private key. Must match with name
+     * @param {function} [callback] - Callback to execute (Optional)
+     */
+    delete_out_message (name, id, pvk, callback = _log) {
+        const eos = Eos(_config(pvk));
+        eos.contract(this.name)
+            .then((contract) => {
+                const param = {
+                    'name': name,
+                    'id': _parse_bigint(id)
+                };
+                const option = {
+                    'authorization': [name + `@active`]
+                };
+
+                return contract.deleteoutmsg(param, option);
+            })
+            .then(result => {
+                callback(null, {'result': result});
+            })
+            .catch(error => {
+                callback(JSON.stringify({'error': error.message || error}));
+            });
+    }
+
+    /**
      * Get user info
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_info (name, callback = log) {
+    get_info (name, callback = _log) {
         _read_table(name, this.name, 'info', callback);
     }
 
@@ -573,7 +642,7 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_apply (name, callback = log) {
+    get_apply (name, callback = _log) {
         _read_table(name, this.name, 'apply', callback);
     }
 
@@ -582,7 +651,7 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_pending (name, callback = log) {
+    get_pending (name, callback = _log) {
         _read_table(name, this.name, 'pending', callback);
     }
 
@@ -591,7 +660,7 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_confirmed (name, callback = log) {
+    get_confirmed (name, callback = _log) {
         _read_table(name, this.name, 'confirm', callback);
     }
 
@@ -600,7 +669,7 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_inbox (name, callback = log) {
+    get_inbox (name, callback = _log) {
         _read_table(name, this.name, 'inbox', callback);
     }
 
@@ -609,7 +678,7 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_outbox (name, callback = log) {
+    get_outbox (name, callback = _log) {
         _read_table(name, this.name, 'outbox', callback);
     }
 }
