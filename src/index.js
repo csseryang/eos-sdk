@@ -1,9 +1,10 @@
 'use strict';
 
 require('babel-polyfill');
+const util = require('util');
+require('util.promisify').shim();
 const Eos = require('eosjs');
 const ecc = require('eosjs-ecc');
-const util = require('util');
 const settings = require('./config');
 const bigInt = require('big-integer');
 
@@ -55,7 +56,8 @@ function _read_table (name, code, table, callback = _log) {
 }
 
 function _promised (instance, func) {
-    let my_func = func.bind(instance);
+    let my_instance = instance;
+    let my_func = func.bind(my_instance);
 
     function get_promise (args) {
         return util.promisify(my_func)(args);
@@ -638,10 +640,10 @@ class Relation {
 
     /**
      * Get user info by a list of account names
-     * @param account_names {list} - Account names
+     * @param account_names {array} - Account names
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_info_list (account_names, callback = log) {
+    get_info_list (account_names, callback = _log) {
         Promise.all(account_names.map(_promised(this, this.get_info)))
             .then((results) => {
                 let processed = results.map(x => JSON.parse(x).result[0]).concat();
@@ -698,8 +700,7 @@ class Relation {
     }
 }
 
-module
-    .exports = {
+module.exports = {
     random_key,
     pvk_to_puk,
     sign,
