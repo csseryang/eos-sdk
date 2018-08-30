@@ -1,6 +1,7 @@
 // http://eslint.org/docs/user-guide/configuring
 
 module.exports = {
+    extends: 'standard',
     root: true,
     parser: 'babel-eslint',
     parserOptions: {
@@ -10,9 +11,7 @@ module.exports = {
         node: true,
         browser: false,
     },
-
-    // add your custom rules here
-    'rules': {
+    rules: {
         "camelcase": [0],
         "files": ["src/*.js"],
         "semi": [2, "always"],

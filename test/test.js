@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 'use strict';
 
 const EosSdk = require('../src/index.js');
@@ -6,6 +7,7 @@ const expect = require('chai').expect;
 describe('Test Random key generation: ', function () {
     it('Key should be valid', function () {
         EosSdk.random_key((error, result) => {
+            expect(error).to.be.equal(null);
             expect(result).to.be.a('string');
         });
     });
@@ -14,6 +16,7 @@ describe('Test Random key generation: ', function () {
         const pvk = '5JSWcuJu9ECEXqk3BCYkuK98A8QnrVSZZfzudw6hD2rNrpfPSVa';
         const puk = 'EOS6WRTBxUmngRjc5Nxjpt9WnCYLb4eBaLxvdqmofmcB2VT3g59dJ';
         EosSdk.pvk_to_puk(pvk, (error, result) => {
+            expect(error).to.be.equal(null);
             expect(JSON.parse(result).publicKey).to.be.equal(puk);
         });
     });
@@ -23,6 +26,7 @@ describe('Test Random key generation: ', function () {
         const s = 'abcdefg';
         const sig = 'SIG_K1_JybL4Zh1gXGAiAN7a4y85m1DCZdK8w1XFRigafychYDChm7npdXDUtw1v783iNM69fmFSDj2GsFzZmskgSsBxVPkLmYGC8';
         EosSdk.sign(s, pvk, (error, result) => {
+            expect(error).to.be.equal(null);
             expect(JSON.parse(result).signature).to.be.equal(sig);
         });
     });
@@ -30,6 +34,7 @@ describe('Test Random key generation: ', function () {
     it('User info should be correct', function () {
         const user = 'cybchainsys1';
         EosSdk.get_account(user, (error, result) => {
+            expect(error).to.be.equal(null);
             expect(JSON.parse(result).account.account_name).to.be.equal(user);
         });
     });
@@ -37,6 +42,7 @@ describe('Test Random key generation: ', function () {
     it('Balance should be correct', function () {
         const user = 'cybchainsys1';
         EosSdk.get_balance(user, 'eosio.token', (error, result) => {
+            expect(error).to.be.equal(null);
             expect(JSON.parse(result).balance[0].balance).to.be.contains('SYS');
         });
     });
@@ -67,12 +73,10 @@ describe('Test Random key generation: ', function () {
         try {
             await relation.register(user_a, 1, 'uri1', 'extra1', pk_a);
             await relation.register(user_b, 1, 'uri2', 'extra2', pk_b);
-
         } catch (e) {
-            let r1 = await relation.get_info(user_a);
+            // let r1 = await relation.get_info(user_a);
             // console.log(r1);
-
-            let r2 = await relation.get_info(user_b);
+            // let r2 = await relation.get_info(user_b);
             // console.log(r2);
         }
 
@@ -92,7 +96,6 @@ describe('Test Random key generation: ', function () {
             expect(JSON.parse(result).result[0].type).to.be.equal(type);
             expect(JSON.parse(result).result[0].extra).to.be.equal(extra);
             console.log('update uri success');
-
         } catch (error) {
             expect(error).to.be.equal(null);
         }
@@ -191,8 +194,8 @@ describe('Test Random key generation: ', function () {
 
             let outbox_content = await relation.get_outbox(user_a);
             let inbox_content = await relation.get_inbox(user_b);
-            // console.log(outbox_content);
-            // console.log(inbox_content);
+            console.log(outbox_content);
+            console.log(inbox_content);
 
             expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.not.empty;
             expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.not.empty;
@@ -208,11 +211,11 @@ describe('Test Random key generation: ', function () {
 
             outbox_content = await relation.get_outbox(user_a);
             inbox_content = await relation.get_inbox(user_b);
-            // console.log(outbox_content);
-            // console.log(inbox_content);
+            console.log(outbox_content);
+            console.log(inbox_content);
 
-            // expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.not.empty;
-            // expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.not.empty;
+            expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.not.empty;
+            expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.not.empty;
 
             console.log('delete message successful');
 
@@ -226,10 +229,12 @@ describe('Test Random key generation: ', function () {
             outbox_content = await relation.get_outbox(user_a);
             inbox_content = await relation.get_inbox(user_b);
 
+            console.log(outbox_content);
+            console.log(inbox_content);
+
             expect(JSON.parse(outbox_content).result[0].sendmsgs).to.be.empty;
             expect(JSON.parse(inbox_content).result[0].receivemsgs).to.be.empty;
             console.log('delete box successful');
-
         } catch (error) {
             console.log(error);
             expect(error).to.be.equal(null);
@@ -257,7 +262,6 @@ describe('Test Random key generation: ', function () {
         } catch (error) {
             expect(error).to.be.equal(null);
         }
-
     });
 
     it('Test concurrency', async function () {
@@ -394,7 +398,6 @@ describe('Test Random key generation: ', function () {
             }
         }
 
-
         for (let key of keys) {
             try {
                 await relation.accept(user_a, key, pk_a);
@@ -404,20 +407,21 @@ describe('Test Random key generation: ', function () {
         }
 
         // Send messages
-        let tasks = [];
-        for (let key of keys) {
-            tasks.push(relation.send_message(user_a, key, 'hello', pk_a));
-        }
-
-        try {
-            await Promise.all(tasks);
-        } catch (e) {
-            console.log(e);
-        }
+        // let tasks = [];
+        // for (let key of keys) {
+        //     tasks.push(relation.send_message(user_a, key, 'hello', pk_a));
+        // }
+        //
+        // try {
+        //     await Promise.all(tasks);
+        // } catch (e) {
+        //     console.log(e);
+        // }
+        await relation.send_group_message(user_a, keys, 'hello', pk_a);
 
         let outbox_content = await relation.get_outbox(user_a);
+        console.log(outbox_content);
 
-        // console.log(outbox_content);
         for (let key of keys) {
             expect(outbox_content).to.be.contains(key);
         }
@@ -428,7 +432,7 @@ describe('Test Random key generation: ', function () {
         for (let key of keys) {
             try {
                 let inbox_content = await relation.get_inbox(key);
-                // console.log(inbox_content);
+                console.log(inbox_content);
                 expect(inbox_content).to.be.contains(user_a);
 
                 let in_id = JSON.parse(inbox_content).result[0].msgid;
@@ -448,6 +452,4 @@ describe('Test Random key generation: ', function () {
             }
         }
     });
-
-
 });

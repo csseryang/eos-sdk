@@ -41,29 +41,24 @@ function _parse_bigint (id) {
     return bigInt(r, 16).toString(10);
 }
 
-function _read_table (name, code, table, callback = _log) {
-    const eos = Eos(_config());
-    eos.getTableRows({
+async function _read_table (name, code, table, callback) {
+    const eos = eos_client();
+    let read_table = eos.getTableRows({
         'scope': name,
         'code': code,
         'table': table,
         'json': true
-    }).then(balance => {
-        callback(null, JSON.stringify({'result': balance.rows}));
-    }).catch(error => {
-        callback(JSON.stringify({'error': error.message || error}));
     });
-}
 
-function _promised (instance, func) {
-    let my_instance = instance;
-    let my_func = func.bind(my_instance);
-
-    function get_promise (args) {
-        return util.promisify(my_func)(args);
+    if (callback === undefined) {
+        return read_table;
+    } else {
+        read_table.then(balance => {
+            callback(null, JSON.stringify({'result': balance.rows}));
+        }).catch(error => {
+            callback(JSON.stringify({'error': error.message || error}));
+        });
     }
-
-    return get_promise;
 }
 
 /**
@@ -119,7 +114,7 @@ function sign (s, pvk, callback = _log) {
  * @param [callback] {function} - Callback to execute (Optional)
  */
 function get_account (name, callback = _log) {
-    const eos = Eos(_config());
+    const eos = eos_client();
     eos.getAccount(name).then(result => {
         callback(null, JSON.stringify({'account': result}));
     }).catch(error => {
@@ -134,7 +129,7 @@ function get_account (name, callback = _log) {
  * @param [callback] {function} - Callback to execute (Optional)
  */
 function get_balance (name, code = 'eosio.token', callback = _log) {
-    const eos = Eos(_config());
+    const eos = eos_client();
     eos.getTableRows({
         'scope': name,
         'code': code,
@@ -153,7 +148,7 @@ function get_balance (name, code = 'eosio.token', callback = _log) {
  * @param {function} [callback] - Callback to execute (Optional)
  */
 function get_key_accounts (puk, callback = _log) {
-    const eos = Eos(_config());
+    const eos = eos_client();
     eos.getKeyAccounts(puk).then(names => {
         callback(null, JSON.stringify({'names': names}));
     }).catch(error => {
@@ -168,7 +163,7 @@ function get_key_accounts (puk, callback = _log) {
  * @param [callback] {function} - Callback to execute (Optional)
  */
 function get_currency_stats (symbol, code = 'eosio.token', callback = _log) {
-    const eos = Eos(_config());
+    const eos = eos_client();
     eos.getCurrencyStats(code, symbol).then(stats => {
         callback(null, JSON.stringify({'stats': stats}));
     }).catch(error => {
@@ -186,7 +181,7 @@ function get_currency_stats (symbol, code = 'eosio.token', callback = _log) {
  * @param {function} [callback] - Callback to execute (Optional)
  */
 function transfer (from, to, amount, memo, pvk, callback = _log) {
-    const eos = Eos(_config(pvk));
+    const eos = eos_client(pvk);
     eos.transfer(from, to, amount, memo).then(result => {
         callback(null, {'result': result});
     }).catch(error => {
@@ -228,7 +223,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     register (name, type, uri, extra, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -259,7 +254,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     set_uri (name, uri, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -288,7 +283,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     set_type (name, type, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -317,7 +312,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     set_extra (name, extra, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -346,7 +341,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     apply (from, to, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -375,7 +370,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     accept (from, to, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -404,7 +399,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     reject (from, to, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -432,7 +427,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     cancel (from, to, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -461,7 +456,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     delete (from, to, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -491,7 +486,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     send_message (from, to, message, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -514,6 +509,39 @@ class Relation {
     }
 
     /**
+     * Send a message
+     * @param from {string} - Account name
+     * @param targets {array} - Recipient names
+     * @param message {string} - Message to send
+     * @param pvk {string} - Private key. Must match name
+     * @param {function} [callback] - Callback to execute (Optional)
+     */
+    async send_group_message (from, targets, message, pvk, callback = _log) {
+        const eos = eos_client(pvk);
+        const contract = await eos.contract(this.name);
+
+        let todo = [];
+        for (let to of targets) {
+            const param = {
+                'name': from,
+                'receiver': to,
+                'message': message
+            };
+            const option = {
+                'authorization': [from + `@active`]
+            };
+            todo.push(contract.sendmessage(param, option));
+        }
+
+        try {
+            let result = await Promise.all(todo);
+            callback(null, {'result': result});
+        } catch (error) {
+            callback(JSON.stringify({'error': error.message || error}));
+        }
+    }
+
+    /**
      * Delete all message before id in InBox
      * @param name {string} - Account name
      * @param id {string/number} - Max message id to delete
@@ -521,7 +549,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     delete_inbox (name, id, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -550,7 +578,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     delete_outbox (name, id, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -579,7 +607,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     delete_in_message (name, id, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -608,7 +636,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     delete_out_message (name, id, pvk, callback = _log) {
-        const eos = Eos(_config(pvk));
+        const eos = eos_client(pvk);
         eos.contract(this.name)
             .then((contract) => {
                 const param = {
@@ -639,19 +667,24 @@ class Relation {
     }
 
     /**
-     * Get user info by a list of account names
+     * Get user info by an array of account names
      * @param account_names {array} - Account names
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_info_list (account_names, callback = _log) {
-        Promise.all(account_names.map(_promised(this, this.get_info)))
-            .then((results) => {
-                let processed = results.map(x => JSON.parse(x).result[0]).concat();
-                callback(null, JSON.stringify({'result': processed}));
-            })
-            .catch(error => {
-                callback(JSON.stringify({'error': error.message || error}));
-            });
+    async get_info_list (account_names, callback = _log) {
+        let todo = [];
+        for (let name of account_names) {
+            todo.push(_read_table(name, this.name, 'info'));
+        }
+
+        try {
+            let results = await Promise.all(todo);
+            console.log(JSON.stringify(results));
+            let processed = results.map(x => x.rows[0]).concat();
+            callback(null, JSON.stringify({'result': processed}));
+        } catch (error) {
+            callback(JSON.stringify({'error': error.message || error}));
+        }
     }
 
     /**
@@ -700,6 +733,10 @@ class Relation {
     }
 }
 
+function eos_client (pk) {
+    return Eos(_config(pk));
+}
+
 module.exports = {
     random_key,
     pvk_to_puk,
@@ -710,5 +747,5 @@ module.exports = {
     get_currency_stats,
     transfer,
     relation,
-    api: Eos(_config())
+    client: eos_client
 };
