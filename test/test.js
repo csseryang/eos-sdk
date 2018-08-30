@@ -56,7 +56,7 @@ describe('Test Random key generation: ', function () {
         });
     });
 
-    const relation = EosSdk.relation('family111112').promisified();
+    const relation = EosSdk.relation('family111113').promisified();
 
     it('Test relation', async function () {
         this.timeout(5000000);
