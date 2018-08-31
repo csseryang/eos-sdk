@@ -544,7 +544,7 @@ class Relation {
     /**
      * Delete all message before id in InBox
      * @param name {string} - Account name
-     * @param id {string/number} - Max message id to delete
+     * @param id {number} - Max message id to delete
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
@@ -573,7 +573,7 @@ class Relation {
     /**
      * Delete all message before id in OutBox
      * @param name {string} - Account name
-     * @param id {string/number} Max message id to delete
+     * @param id {number} Max message id to delete
      * @param pvk {string} - Private key. Must match name
      * @param {function} [callback] - Callback to execute (Optional)
      */
@@ -602,7 +602,7 @@ class Relation {
     /**
      * Delete one message by id in InBox
      * @param name {string} - Account name
-     * @param id {string} Message id to delete
+     * @param id {number} Message id to delete
      * @param pvk {string} - Private key. Must match with name
      * @param {function} [callback] - Callback to execute (Optional)
      */
@@ -631,7 +631,7 @@ class Relation {
     /**
      * Delete one message by id in OutBox
      * @param name {string} - Account name
-     * @param id {string/number} Message id to delete
+     * @param id {number} Message id to delete
      * @param pvk {string} - Private key. Must match with name
      * @param {function} [callback] - Callback to execute (Optional)
      */
