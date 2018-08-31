@@ -719,8 +719,15 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_inbox (name, callback = _log) {
-        _read_table(name, this.name, 'inbox', callback);
+    async get_inbox (name, callback = _log) {
+        try {
+            let results = await _read_table(name, this.name, 'inbox');
+            let msgs = results.rows[0].receivemsgs;
+            results.rows[0].receivemsgs = '[' + msgs + ']';
+            callback(null, JSON.stringify({'result': results.rows}));
+        } catch (error) {
+            callback(error);
+        }
     }
 
     /**
@@ -728,8 +735,11 @@ class Relation {
      * @param name {string} - Account name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    get_outbox (name, callback = _log) {
-        _read_table(name, this.name, 'outbox', callback);
+    async get_outbox (name, callback = _log) {
+        let results = await _read_table(name, this.name, 'outbox');
+        let msgs = results.rows[0].sendmsgs;
+        results.rows[0].sendmsgs = '[' + msgs + ']';
+        callback(null, JSON.stringify({'result': results.rows}));
     }
 }
 
