@@ -4,6 +4,17 @@
 const EosSdk = require('../src/index.js');
 const expect = require('chai').expect;
 
+const user_a = 'v3tvinwkueop';
+const pk_a = '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv';
+
+let users = {
+    'ezinktpzywqy': '5K6wfQxLwCEPZkj82mwhYDq98tADKoCaiAo2wCBLK3tZCtG2V1u',
+    '3mp5okrqkzh5': '5HsUryEvampY4ydxw3deZVG6TBfYNd8v9WhWJJ2R49Wm27FMbig',
+    'czluipsldaqn': '5Hw3KvnRZtvDdEvRMntg7oYZq4MiU3q3Mqfspb4EcPtJg7s4Tsj',
+    'fodrqvu4hrvc': '5Jgaiixf97p88HySqi7ZXz8AXpgXmUexL4Lzz6oiwPCYjxJ5yj8',
+    '5quyg4k5xs3a': '5JycYV8EXNTrbCjbZ66xvVkksJyhc4sNFm45MZ5SjYmGgb1UA2S'
+};
+
 describe('Test Random key generation: ', function () {
     it('Key should be valid', function () {
         EosSdk.random_key((error, result) => {
@@ -48,24 +59,19 @@ describe('Test Random key generation: ', function () {
     });
 
     it('Transfer should success', function () {
-        const user_a = 'g1fciq4auixg';
-        const user_b = 'xzvbupxsbeam';
-        const pk_a = '5KJH24PhJrWvQxugGfVYnbeiBEAbzKUpreDmHNfCi3EyPyAZfmP';
+        const user_b = Object.keys(users)[0];
         EosSdk.transfer(user_a, user_b, '0.0001 SYS', '', pk_a, (error, result) => {
             expect(error).to.be.equal(null);
         });
     });
 
-    const relation = EosSdk.relation('family111113').promisified();
+    const relation = EosSdk.relation('family111111').promisified();
 
     it('Test relation', async function () {
         this.timeout(5000000);
 
-        const user_a = 'e4zrp3lxow3h';
-        const pk_a = '5KckAqraw3PNGpkN12iTiNBC9hTgjtm9jifCp135baorvincXbr';
-
-        const user_b = 'kjnz5u3yqbld';
-        const pk_b = '5J846ZRnpmKJfJtm1tDxT98Y193ihmuAqiEitAfFuMry6YZ7p7k';
+        const user_b = Object.keys(users)[0];
+        const pk_b = users[user_b];
 
         const res = await relation.get_info_list([user_a, user_b]);
         console.log(res);
@@ -266,18 +272,6 @@ describe('Test Random key generation: ', function () {
 
     it('Test concurrency', async function () {
         this.timeout(5000000);
-
-        const user_a = 'v3tvinwkueop';
-        const pk_a = '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv';
-
-        let users = {
-            'ezinktpzywqy': '5K6wfQxLwCEPZkj82mwhYDq98tADKoCaiAo2wCBLK3tZCtG2V1u',
-            '3mp5okrqkzh5': '5HsUryEvampY4ydxw3deZVG6TBfYNd8v9WhWJJ2R49Wm27FMbig',
-            'czluipsldaqn': '5Hw3KvnRZtvDdEvRMntg7oYZq4MiU3q3Mqfspb4EcPtJg7s4Tsj',
-            'fodrqvu4hrvc': '5Jgaiixf97p88HySqi7ZXz8AXpgXmUexL4Lzz6oiwPCYjxJ5yj8',
-            '5quyg4k5xs3a': '5JycYV8EXNTrbCjbZ66xvVkksJyhc4sNFm45MZ5SjYmGgb1UA2S'
-        };
-
         let keys = Object.keys(users);
 
         for (let key of keys) {
@@ -361,17 +355,6 @@ describe('Test Random key generation: ', function () {
     it('Test group msg', async function () {
         this.timeout(5000000);
 
-        const user_a = 'v3tvinwkueop';
-        const pk_a = '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv';
-
-        let users = {
-            'ezinktpzywqy': '5K6wfQxLwCEPZkj82mwhYDq98tADKoCaiAo2wCBLK3tZCtG2V1u',
-            '3mp5okrqkzh5': '5HsUryEvampY4ydxw3deZVG6TBfYNd8v9WhWJJ2R49Wm27FMbig',
-            'czluipsldaqn': '5Hw3KvnRZtvDdEvRMntg7oYZq4MiU3q3Mqfspb4EcPtJg7s4Tsj',
-            'fodrqvu4hrvc': '5Jgaiixf97p88HySqi7ZXz8AXpgXmUexL4Lzz6oiwPCYjxJ5yj8',
-            '5quyg4k5xs3a': '5JycYV8EXNTrbCjbZ66xvVkksJyhc4sNFm45MZ5SjYmGgb1UA2S'
-        };
-
         let keys = Object.keys(users);
 
         for (let key of keys) {
@@ -406,17 +389,6 @@ describe('Test Random key generation: ', function () {
             }
         }
 
-        // Send messages
-        // let tasks = [];
-        // for (let key of keys) {
-        //     tasks.push(relation.send_message(user_a, key, 'hello', pk_a));
-        // }
-        //
-        // try {
-        //     await Promise.all(tasks);
-        // } catch (e) {
-        //     console.log(e);
-        // }
         await relation.send_group_message(user_a, keys, 'hello', pk_a);
 
         let outbox_content = await relation.get_outbox(user_a);
