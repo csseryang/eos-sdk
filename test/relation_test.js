@@ -4,6 +4,9 @@
 const EosSdk = require('../src/index.js');
 const expect = require('chai').expect;
 
+let end_point = 'http://52.8.73.95:8000';
+let chain_id = '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347';
+
 const user_a = 'v3tvinwkueop';
 const pk_a = '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv';
 
@@ -15,57 +18,9 @@ let users = {
     '5quyg4k5xs3a': '5JycYV8EXNTrbCjbZ66xvVkksJyhc4sNFm45MZ5SjYmGgb1UA2S'
 };
 
-describe('Test Random key generation: ', function () {
-    it('Key should be valid', function () {
-        EosSdk.random_key((error, result) => {
-            expect(error).to.be.equal(null);
-            expect(result).to.be.a('string');
-        });
-    });
-
-    it('Key transfer should be correct', function () {
-        const pvk = '5JSWcuJu9ECEXqk3BCYkuK98A8QnrVSZZfzudw6hD2rNrpfPSVa';
-        const puk = 'EOS6WRTBxUmngRjc5Nxjpt9WnCYLb4eBaLxvdqmofmcB2VT3g59dJ';
-        EosSdk.pvk_to_puk(pvk, (error, result) => {
-            expect(error).to.be.equal(null);
-            expect(JSON.parse(result).publicKey).to.be.equal(puk);
-        });
-    });
-
-    it('Sign should be correct', function () {
-        const pvk = '5JSWcuJu9ECEXqk3BCYkuK98A8QnrVSZZfzudw6hD2rNrpfPSVa';
-        const s = 'abcdefg';
-        const sig = 'SIG_K1_JybL4Zh1gXGAiAN7a4y85m1DCZdK8w1XFRigafychYDChm7npdXDUtw1v783iNM69fmFSDj2GsFzZmskgSsBxVPkLmYGC8';
-        EosSdk.sign(s, pvk, (error, result) => {
-            expect(error).to.be.equal(null);
-            expect(JSON.parse(result).signature).to.be.equal(sig);
-        });
-    });
-
-    it('User info should be correct', function () {
-        const user = 'cybchainsys1';
-        EosSdk.get_account(user, (error, result) => {
-            expect(error).to.be.equal(null);
-            expect(JSON.parse(result).account.account_name).to.be.equal(user);
-        });
-    });
-
-    it('Balance should be correct', function () {
-        const user = 'cybchainsys1';
-        EosSdk.get_balance(user, 'eosio.token', (error, result) => {
-            expect(error).to.be.equal(null);
-            expect(JSON.parse(result).balance[0].balance).to.be.contains('SYS');
-        });
-    });
-
-    it('Transfer should success', function () {
-        const user_b = Object.keys(users)[0];
-        EosSdk.transfer(user_a, user_b, '0.0001 SYS', '', pk_a, (error, result) => {
-            expect(error).to.be.equal(null);
-        });
-    });
-
-    const relation = EosSdk.relation('family111111').promisified();
+describe('Test Relation Contract: ', function () {
+    const relation = EosSdk.use(end_point, chain_id).relation('family111111');
+    const relation_a = EosSdk.use(end_point, chain_id, pk_a).relation('family111111');
 
     it('Test relation', async function () {
         this.timeout(5000000);
@@ -73,12 +28,14 @@ describe('Test Random key generation: ', function () {
         const user_b = Object.keys(users)[0];
         const pk_b = users[user_b];
 
+        const relation_b = EosSdk.use(end_point, chain_id, pk_b).relation('family111111');
+
         const res = await relation.get_info_list([user_a, user_b]);
         console.log(res);
 
         try {
-            await relation.register(user_a, 1, 'uri1', 'extra1', pk_a);
-            await relation.register(user_b, 1, 'uri2', 'extra2', pk_b);
+            await relation_a.register(user_a, 1, 'uri1', 'extra1');
+            await relation_b.register(user_b, 1, 'uri2', 'extra2');
         } catch (e) {
             // let r1 = await relation.get_info(user_a);
             // console.log(r1);
@@ -353,7 +310,7 @@ describe('Test Random key generation: ', function () {
     });
 
     it('Test group msg', async function () {
-        this.timeout(5000000);
+        this.timeout(6000000);
 
         let keys = Object.keys(users);
 
