@@ -11,7 +11,7 @@ const process = utils.process;
 class Story {
     /**
      * Story contract class
-     * @param {Eos} eos
+     * @param {Eos} eos - Eos client
      * @param {string} contract_name  - Contract owner account name
      *
      */

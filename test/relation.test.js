@@ -25,217 +25,217 @@ for (let name of testers) {
     relations.push(client);
 }
 
-// describe('Test Relation Contract: ', function () {
-//     this.timeout(5000000);
-//
-//     it('Test relation', async function () {
-//         const res = await relations[0].get_info_list(testers, null);
-//         console.log(res);
-//
-//         let user_a = 'v3tvinwkueop';
-//         let user_b = 'ezinktpzywqy';
-//         let relation_a = EosSdk.use(end_point, chain_id, '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv').relation(contract_name);
-//         let relation_b = EosSdk.use(end_point, chain_id, '5K6wfQxLwCEPZkj82mwhYDq98tADKoCaiAo2wCBLK3tZCtG2V1u').relation(contract_name);
-//
-//         try {
-//             let [type, uri, extra] = [Math.floor(Math.random() * 2), Math.random().toString(), Math.random().toString()];
-//
-//             await relation_a.set_type(user_a, type, null);
-//             await relation_a.set_uri(user_a, uri, null);
-//             await relation_a.set_extra(user_a, extra, null);
-//
-//             let result = JSON.parse(await relation_a.get_info(user_a, null));
-//             console.log(result);
-//             expect(result.result.uri).to.be.equal(uri);
-//             expect(result.result.type).to.be.equal(type);
-//             expect(result.result.extra).to.be.equal(extra);
-//             console.log('update uri success');
-//         } catch (error) {
-//             console.error(error);
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             await relation_a.delete(user_a, user_b, null);
-//         } catch (error) {
-//             console.log('relation starts from strangers');
-//         }
-//
-//         try {
-//             await relation_b.reject(user_b, user_a);
-//         } catch (error) {
-//             console.log('relation starts from rejection');
-//         }
-//
-//         try {
-//             let result = await relation_a.apply(user_a, user_b, null);
-//             expect(result).to.be.not.equal(null);
-//             console.log('apply successful');
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_a.get_apply(user_a, null));
-//             console.log(result);
-//             expect(result.result.applies).to.contains(user_b);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_a.get_pending(user_b, null));
-//             console.log(result);
-//             expect(result.result.pendings).to.contains(user_a);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = await relation_b.reject(user_b, user_a, null);
-//             expect(result).to.be.not.equal(null);
-//             console.log('reject successful');
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_a.get_apply(user_a, null));
-//             console.log(result);
-//             expect(result.result.applies).to.not.contains(user_b);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_b.get_pending(user_b, null));
-//             console.log(result);
-//             expect(result.result.pendings).to.not.contains(user_a);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = await relation_a.apply(user_a, user_b, null);
-//             expect(result).to.be.not.equal(null);
-//             console.log('apply successful');
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             let result = await relation_b.accept(user_b, user_a, null);
-//             expect(result).to.be.not.equal(null);
-//             console.log('accept successful');
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_a.get_confirmed(user_a, null));
-//             console.log(result);
-//             expect(result.result.confirms).to.contains(user_b);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_b.get_confirmed(user_b, null));
-//             console.log(result);
-//             expect(result.result.confirms).to.contains(user_a);
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             // Send 3 messages
-//             await relation_a.send_message(user_a, user_b, 'hello1', null);
-//             await relation_a.send_message(user_a, user_b, 'hello2', null);
-//             await relation_a.send_message(user_a, user_b, 'hello3', null);
-//
-//             let outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
-//             let inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
-//
-//             let out_messages = JSON.parse(outbox_content.result.sendmsgs);
-//             let in_messages = JSON.parse(inbox_content.result.receivemsgs);
-//
-//             console.log(out_messages);
-//             console.log(in_messages);
-//
-//             expect(out_messages).to.be.not.empty;
-//             expect(in_messages).to.be.not.empty;
-//
-//             console.log('send message successful');
-//
-//             // Delete the last message
-//             let out_id = out_messages[out_messages.length - 1].id;
-//             let in_id = in_messages[in_messages.length - 1].id;
-//
-//             await relation_a.delete_out_message(user_a, out_id, null);
-//             await relation_b.delete_in_message(user_b, in_id, null);
-//
-//             outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
-//             inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
-//
-//             console.log(outbox_content);
-//             console.log(inbox_content);
-//
-//             expect(outbox_content.result.sendmsgs).to.be.not.empty;
-//             expect(inbox_content.result.receivemsgs).to.be.not.empty;
-//
-//             console.log('delete message successful');
-//
-//             // // Delete all messages
-//             // out_messages = JSON.parse(outbox_content.result.sendmsgs);
-//             // in_messages = JSON.parse(inbox_content.result.receivemsgs);
-//             //
-//             // console.log(out_messages);
-//             // console.log(in_messages);
-//             //
-//             // let out_id = out_messages[in_messages.length - 1].id;
-//             // let in_id = in_messages[in_messages.length - 1].id;
-//             //
-//             // await relation_a.delete_outbox(user_a, out_id, null);
-//             // await relation_b.delete_inbox(user_b, in_id, null);
-//             //
-//             // outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
-//             // inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
-//             //
-//             // console.log(outbox_content);
-//             // console.log(inbox_content);
-//             //
-//             // expect(outbox_content.result.sendmsgs).to.be.equal('[]');
-//             // expect(inbox_content.result.receivemsgs).to.be.equal('[]');
-//             // console.log('delete box successful');
-//         } catch (error) {
-//             console.log(error);
-//             expect(error).to.be.equal(null);
-//         }
-//         try {
-//             let result = await relation_a.delete(user_a, user_b, null);
-//             expect(result).to.be.not.equal(null);
-//             console.log('delete contact successful');
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_a.get_confirmed(user_a, null));
-//             // console.log(result);
-//             expect(result.result.confirms).to.not.contains(user_b);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//
-//         try {
-//             let result = JSON.parse(await relation_b.get_confirmed(user_b, null));
-//             // console.log(result);
-//             expect(result.result.confirms).to.not.contains(user_a);
-//         } catch (error) {
-//             expect(error).to.be.equal(null);
-//         }
-//     });
-// });
+describe('Test Relation Contract: ', function () {
+    this.timeout(5000000);
+
+    it('Test relation', async function () {
+        const res = await relations[0].get_info_list(testers, null);
+        console.log(res);
+
+        let user_a = 'v3tvinwkueop';
+        let user_b = 'ezinktpzywqy';
+        let relation_a = EosSdk.use(end_point, chain_id, '5JPQoMWsvkoJ2xwW8ngfikVEJpBx4vnYH8s5eL6UKdYpdavwDVv').relation(contract_name);
+        let relation_b = EosSdk.use(end_point, chain_id, '5K6wfQxLwCEPZkj82mwhYDq98tADKoCaiAo2wCBLK3tZCtG2V1u').relation(contract_name);
+
+        try {
+            let [type, uri, extra] = [Math.floor(Math.random() * 2), Math.random().toString(), Math.random().toString()];
+
+            await relation_a.set_type(user_a, type, null);
+            await relation_a.set_uri(user_a, uri, null);
+            await relation_a.set_extra(user_a, extra, null);
+
+            let result = JSON.parse(await relation_a.get_info(user_a, null));
+            console.log(result);
+            expect(result.result.uri).to.be.equal(uri);
+            expect(result.result.type).to.be.equal(type);
+            expect(result.result.extra).to.be.equal(extra);
+            console.log('update uri success');
+        } catch (error) {
+            console.error(error);
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            await relation_a.delete(user_a, user_b, null);
+        } catch (error) {
+            console.log('relation starts from strangers');
+        }
+
+        try {
+            await relation_b.reject(user_b, user_a);
+        } catch (error) {
+            console.log('relation starts from rejection');
+        }
+
+        try {
+            let result = await relation_a.apply(user_a, user_b, null);
+            expect(result).to.be.not.equal(null);
+            console.log('apply successful');
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            let result = JSON.parse(await relation_a.get_apply(user_a, null));
+            console.log(result);
+            expect(result.result.applies).to.contains(user_b);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = JSON.parse(await relation_a.get_pending(user_b, null));
+            console.log(result);
+            expect(result.result.pendings).to.contains(user_a);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = await relation_b.reject(user_b, user_a, null);
+            expect(result).to.be.not.equal(null);
+            console.log('reject successful');
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            let result = JSON.parse(await relation_a.get_apply(user_a, null));
+            console.log(result);
+            expect(result.result.applies).to.not.contains(user_b);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = JSON.parse(await relation_b.get_pending(user_b, null));
+            console.log(result);
+            expect(result.result.pendings).to.not.contains(user_a);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = await relation_a.apply(user_a, user_b, null);
+            expect(result).to.be.not.equal(null);
+            console.log('apply successful');
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            let result = await relation_b.accept(user_b, user_a, null);
+            expect(result).to.be.not.equal(null);
+            console.log('accept successful');
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            let result = JSON.parse(await relation_a.get_confirmed(user_a, null));
+            console.log(result);
+            expect(result.result.confirms).to.contains(user_b);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = JSON.parse(await relation_b.get_confirmed(user_b, null));
+            console.log(result);
+            expect(result.result.confirms).to.contains(user_a);
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            // Send 3 messages
+            await relation_a.send_message(user_a, user_b, 'hello1', null);
+            await relation_a.send_message(user_a, user_b, 'hello2', null);
+            await relation_a.send_message(user_a, user_b, 'hello3', null);
+
+            let outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
+            let inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
+
+            let out_messages = JSON.parse(outbox_content.result.sendmsgs);
+            let in_messages = JSON.parse(inbox_content.result.receivemsgs);
+
+            console.log(out_messages);
+            console.log(in_messages);
+
+            expect(out_messages).to.be.not.empty;
+            expect(in_messages).to.be.not.empty;
+
+            console.log('send message successful');
+
+            // // Delete the last message
+            // let out_id = out_messages[out_messages.length - 1].id;
+            // let in_id = in_messages[in_messages.length - 1].id;
+            //
+            // await relation_a.delete_out_message(user_a, out_id, null);
+            // await relation_b.delete_in_message(user_b, in_id, null);
+            //
+            // outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
+            // inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
+            //
+            // console.log(outbox_content);
+            // console.log(inbox_content);
+            //
+            // expect(outbox_content.result.sendmsgs).to.be.not.empty;
+            // expect(inbox_content.result.receivemsgs).to.be.not.empty;
+            //
+            // console.log('delete message successful');
+
+            // Delete all messages
+            out_messages = JSON.parse(outbox_content.result.sendmsgs);
+            in_messages = JSON.parse(inbox_content.result.receivemsgs);
+
+            console.log(out_messages);
+            console.log(in_messages);
+
+            let out_id = out_messages[out_messages.length - 1].id;
+            let in_id = in_messages[in_messages.length - 1].id;
+
+            await relation_a.delete_outbox(user_a, out_id, null);
+            await relation_b.delete_inbox(user_b, in_id, null);
+
+            outbox_content = JSON.parse(await relation_a.get_outbox(user_a, null));
+            inbox_content = JSON.parse(await relation_b.get_inbox(user_b, null));
+
+            console.log(outbox_content);
+            console.log(inbox_content);
+
+            expect(outbox_content.result.sendmsgs).to.be.equal('[]');
+            expect(inbox_content.result.receivemsgs).to.be.equal('[]');
+            console.log('delete box successful');
+        } catch (error) {
+            console.log(error);
+            expect(error).to.be.equal(null);
+        }
+        try {
+            let result = await relation_a.delete(user_a, user_b, null);
+            expect(result).to.be.not.equal(null);
+            console.log('delete contact successful');
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+
+        try {
+            let result = JSON.parse(await relation_a.get_confirmed(user_a, null));
+            // console.log(result);
+            expect(result.result.confirms).to.not.contains(user_b);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            let result = JSON.parse(await relation_b.get_confirmed(user_b, null));
+            // console.log(result);
+            expect(result.result.confirms).to.not.contains(user_a);
+        } catch (error) {
+            expect(error).to.be.equal(null);
+        }
+    });
+});
 
 // describe('', function () {
 //     it('Test concurrency', async function () {

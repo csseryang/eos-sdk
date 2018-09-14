@@ -4,6 +4,7 @@ const clog = require('./utilities').log;
 /**
  * Generate random private key/ public key pair
  * @param {function} [callback] - Callback to execute (Optional)
+ * @returns {Promise<*|Promise<wif>>}
  */
 async function random_key (callback = clog) {
     let rand_key = ecc.randomKey();
@@ -48,6 +49,10 @@ function sign (s, pvk, callback = clog) {
     }
 }
 
+/**
+ * EOS Ecc library
+ * @module ecc
+ */
 module.exports = {
     random_key,
     pvk_to_puk,

@@ -2,7 +2,7 @@ const Eos = require('eosjs');
 const bigInt = require('big-integer');
 
 /**
- *
+ * Log
  * @param error
  * @param result
  */
@@ -15,9 +15,9 @@ function log (error, result) {
 }
 
 /**
- *
- * @param end_point
- * @param callback
+ * Get chain info by end point
+ * @param {string} end_point - http end point. starts with "http"
+ * @param {function} [callback] - Callback to execute (Optional)
  * @returns {Promise<*>}
  */
 async function get_chain_info (end_point, callback = log) {
@@ -56,7 +56,7 @@ function default_processor (x) {
 
 /**
  * Get first element
- * @param {Array} x - array
+ * @param {array} x - array
  * @returns {*}
  */
 function get_first_processor (x) {
@@ -82,11 +82,11 @@ function parse_bigint (id) {
 }
 
 /**
- *
- * @param {Promise<*>} call
- * @param {function} processor
+ * Process result
+ * @param {Promise<*>} call - Async function call for result
+ * @param {function} processor - Function to run on raw output
  * @param {function} [callback] - Callback to execute (Optional)
- * @returns {Promise<*>}
+ * @returns {Promise<string>}
  * @private
  */
 async function process (call, callback, processor = default_processor) {
@@ -108,6 +108,10 @@ async function process (call, callback, processor = default_processor) {
     }
 }
 
+/**
+ * Utilities library
+ * @module utilities
+ */
 module.exports = {
     log,
     get_chain_info,

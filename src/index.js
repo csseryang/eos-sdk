@@ -16,9 +16,15 @@ const read_table = utils.read_table;
 const process = utils.process;
 
 /**
- * EOS Client
+ * EOS Client with configuration
  */
 class Use {
+    /**
+     * Eos client with configuration
+     * @param {string} end_point - HTTP EndPoint
+     * @param {string} chain_id - Chain ID
+     * @param {string} pvk - Private key
+     */
     constructor (end_point, chain_id, pvk) {
         this.eos = client(end_point, chain_id, pvk);
     }
@@ -27,6 +33,7 @@ class Use {
      * Get account information from EOS
      * @param {string} name  Account name
      * @param {function} [callback]  - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async get_account (name, callback = clog) {
         let call = this.eos.getAccount(name);
@@ -38,6 +45,7 @@ class Use {
      * @param {string} name  - Account name as index
      * @param {string} [code] - Contract account name (Optional)
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async get_balance (name, code = 'eosio.token', callback = clog) {
         let table = 'accounts';
@@ -49,6 +57,7 @@ class Use {
      * Get account names by public key
      * @param puk {string} - Public key
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async get_key_accounts (puk, callback = clog) {
         let call = this.eos.getKeyAccounts(puk);
@@ -60,6 +69,7 @@ class Use {
      * @param symbol {string} - Currency symbol. e.g. SYS
      * @param [code] {string} - Contract owner name (Optional)
      * @param [callback] {function} - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async get_currency_stats (symbol, code = 'eosio.token', callback = clog) {
         let call = this.eos.getCurrencyStats(code, symbol);
@@ -73,6 +83,7 @@ class Use {
      * @param {string} amount - amount to transfer. must have the same decimal places as token's supply/max_supply. e.g. SYS's max_supply = 10000.0000, then '1.0000 SYS' is legal while '1 SYS' is illegal
      * @param {string} memo - memo
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async transfer (from, to, amount, memo, callback = clog) {
         let call = this.eos.transfer(from, to, amount, memo);
@@ -127,7 +138,6 @@ module.exports = {
     pvk_to_puk: ecc.pvk_to_puk,
     random_key: ecc.random_key,
     sign: ecc.sign,
-
     // updated
     use,
     ecc,

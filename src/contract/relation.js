@@ -20,7 +20,7 @@ class Relation {
 
     /**
      * Get contract by abi
-     * @returns {Promise<void>}
+     * @returns {Promise<*>}
      * @private
      */
     async _contract () {
@@ -34,7 +34,7 @@ class Relation {
      * @param {string} uri - User's external info uri
      * @param {string} extra - User's data
      * @param {function} [callback] - Callback to execute (Optional)
-     *  * @returns {Promise<*>}
+     * @returns {Promise<string>}
      */
     async register (name, type, uri, extra, callback = clog) {
         let contract = await this._contract();
@@ -56,6 +56,7 @@ class Relation {
      * @param name {string} - Account name
      * @param uri {string} - New uri
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async set_uri (name, uri, callback = clog) {
         let contract = await this._contract();
@@ -76,6 +77,7 @@ class Relation {
      * @param name {string} - Account name
      * @param type {number} - New type
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async set_type (name, type, callback = clog) {
         let contract = await this._contract();
@@ -96,6 +98,7 @@ class Relation {
      * @param name {string} - Account name
      * @param extra {string} - User's data
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async set_extra (name, extra, callback = clog) {
         let contract = await this._contract();
@@ -116,6 +119,7 @@ class Relation {
      * @param from {string} - Account name
      * @param to {string} - Recipient name
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async apply (from, to, callback = clog) {
         let contract = await this._contract();
@@ -136,6 +140,7 @@ class Relation {
      * @param from {string} - Account name
      * @param to {string} - Recipient name
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async accept (from, to, callback = clog) {
         let contract = await this._contract();
@@ -156,6 +161,7 @@ class Relation {
      * @param from {string} - Account name
      * @param to {string} - Recipient name
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async reject (from, to, callback = clog) {
         let contract = await this._contract();
@@ -175,6 +181,7 @@ class Relation {
      * @param from {string} - Account name
      * @param to {string} - Recipient name
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async cancel (from, to, callback = clog) {
         let contract = await this._contract();
@@ -194,6 +201,7 @@ class Relation {
      * @param from {string} - Account name
      * @param to {string} - Recipient name
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async delete (from, to, callback = clog) {
         let contract = await this._contract();
@@ -214,6 +222,7 @@ class Relation {
      * @param {string} to  - Recipient name
      * @param {string} message - Message to send
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async send_message (from, to, message, callback = clog) {
         let contract = await this._contract();
@@ -235,6 +244,7 @@ class Relation {
      * @param targets {array} - Recipient names
      * @param message {string} - Message to send
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async send_group_message (from, targets, message, callback = clog) {
         let contract = await this._contract();
@@ -259,6 +269,7 @@ class Relation {
      * @param name {string} - Account name
      * @param id {number} - Max message id to delete
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async delete_inbox (name, id, callback = clog) {
         let contract = await this._contract();
@@ -278,6 +289,7 @@ class Relation {
      * @param name {string} - Account name
      * @param id {number} Max message id to delete
      * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
      */
     async delete_outbox (name, id, callback = clog) {
         let contract = await this._contract();

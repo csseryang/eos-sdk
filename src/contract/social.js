@@ -10,7 +10,7 @@ const process = utils.process;
 class Social {
     /**
      * Social contract class
-     * @param {Eos} eos - eos client
+     * @param {Eos} eos - Eos client
      * @param {string} contract_name  - Contract owner account name
      *
      */
@@ -30,10 +30,10 @@ class Social {
 
     /**
      * Follow someone
-     * @param {string} from - account name
-     * @param {string} to - target account name
+     * @param {string} from - Account name
+     * @param {string} to - Target account name
      * @param {function} [callback] - Callback to execute (Optional)
-     * @returns {Promise<*>}
+     * @returns {Promise<string>}
      */
     async follow (from, to, callback = clog) {
         let contract = await this._contract();
@@ -50,10 +50,10 @@ class Social {
 
     /**
      * UnFollow someone
-     * @param {string} from - account name
-     * @param {string} to - target account name
+     * @param {string} from - Account name
+     * @param {string} to - Target account name
      * @param {function} [callback] - Callback to execute (Optional)
-     * @returns {Promise<*>}
+     * @returns {Promise<string>}
      */
     async unfollow (from, to, callback = clog) {
         let contract = await this._contract();
@@ -70,10 +70,10 @@ class Social {
 
     /**
      * Remove follower
-     * @param {string} from - account name
-     * @param {string} to - target account name
+     * @param {string} from - Account name
+     * @param {string} to - Target account name
      * @param {function} [callback] - Callback to execute (Optional)
-     * @returns {Promise<*>}
+     * @returns {Promise<string>}
      */
     async remove (from, to, callback = clog) {
         let contract = await this._contract();
@@ -90,9 +90,9 @@ class Social {
 
     /**
      * Get accounts that are following you
-     * @param {string} name - account name
+     * @param {string} name - Account name
      * @param {function} [callback] - Callback to execute (Optional)
-     * @returns {Promise<void>}
+     * @returns {Promise<string>}
      */
     async get_following (name, callback = clog) {
         let call = read_table(this.eos, name, this.contract_name, 'follow');
@@ -102,9 +102,9 @@ class Social {
 
     /**
      * Get accounts that you are following
-     * @param {string} name - account name
+     * @param {string} name - Account name
      * @param {function} [callback] - Callback to execute (Optional)
-     * @returns {Promise<void>}
+     * @returns {Promise<string>}
      */
     async get_follower (name, callback = clog) {
         let call = read_table(this.eos, name, this.contract_name, 'following');
