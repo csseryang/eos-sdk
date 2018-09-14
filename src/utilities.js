@@ -46,17 +46,17 @@ async function read_table (eos, name, code, table) {
 }
 
 /**
- *
- * @returns {*[]}
- * @param x
+ * Default processor. do nothing
+ * @param {Object} x - any
+ * @returns {*}
  */
 function default_processor (x) {
     return x;
 }
 
 /**
- *
- * @param x
+ * Get first element
+ * @param {Array} x - array
  * @returns {*}
  */
 function get_first_processor (x) {

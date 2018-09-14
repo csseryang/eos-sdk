@@ -1,8 +1,3 @@
-/**
- * JavaScript helper library for mobile platforms
- * @module EosSdk
- */
-
 'use strict';
 
 require('babel-polyfill');
@@ -105,7 +100,7 @@ class Use {
     /**
      * Get Story contract
      * @param {string} name - contract name
-     * @returns {Social}
+     * @returns {Story}
      */
     story (name) {
         return new Story(this.eos, name);
@@ -123,6 +118,10 @@ function use (end_point, chain_id, pvk) {
     return new Use(end_point, chain_id, pvk);
 }
 
+/**
+ * JavaScript helper library for mobile platforms
+ * @module EosSdk
+ */
 module.exports = {
     // compatibility
     pvk_to_puk: ecc.pvk_to_puk,

@@ -6,7 +6,7 @@
     "build": "gulp build-js",
     "lint": "eslint --ext .js src test",
     "test": "mocha test/*.test.js",
-    "docs": "jsdoc2md src/index.js > dist/README.md"
+    "docs": "jsdoc2md src/*.js src/contract/*.js> dist/README.md"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/EOSIO/eosjs.svg?branch=master)](https://travis-ci.com/qding-bot/eos-sdk)
+[![Build Status](https://travis-ci.org/qdingify/eos-sdk.svg?branch=master)](https://travis-ci.org/qdingify/eos-sdk)
 
 # EOS-SDK
 JavaScript helper library for mobile platforms
