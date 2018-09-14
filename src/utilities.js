@@ -1,6 +1,10 @@
+const Eos = require('eosjs');
+
+// import {Eos} from 'eosjs'
 /**
- * JavaScript helper library for mobile platforms
- * @module EosSdk
+ *
+ * @param error
+ * @param result
  */
 function log (error, result) {
     if (result !== undefined) {
@@ -10,6 +14,87 @@ function log (error, result) {
     }
 }
 
+/**
+ *
+ * @param end_point
+ * @param callback
+ * @returns {Promise<*>}
+ */
+async function get_chain_info (end_point, callback = log) {
+    let eos = Eos.modules.api({httpEndpoint: end_point});
+    let call = eos.getInfo({});
+    return await process(call, callback);
+}
+
+/**
+ * Read table
+ * @param {Eos} eos
+ * @param {string} name - contract name
+ * @param {string} code - index to use
+ * @param {string} table - table name
+ * @returns {Promise<*>}
+ */
+async function read_table (eos, name, code, table) {
+    let call = eos.getTableRows({
+        'scope': name,
+        'code': code,
+        'table': table,
+        'json': true
+    });
+    let result = await call;
+    return result.rows;
+}
+
+
+/**
+ *
+ * @returns {*[]}
+ * @param x
+ */
+function default_processor (x) {
+    return x;
+}
+
+/**
+ *
+ * @param x
+ * @returns {*}
+ */
+function get_first_processor (x) {
+    return x[0];
+}
+
+/**
+ *
+ * @param {Promise<*>} call
+ * @param {function} processor
+ * @param {function }callback
+ * @returns {Promise<*>}
+ * @private
+ */
+async function process (call, callback, processor = default_processor) {
+    try {
+        let result = await call;
+        let output = JSON.stringify({'result': processor(result)});
+        if (callback) {
+            callback(null, output);
+        } else {
+            return output;
+        }
+    } catch (e) {
+        let error = JSON.stringify({'error': e.message || e});
+        if (callback) {
+            callback(error);
+        } else {
+            throw error;
+        }
+    }
+}
+
 module.exports = {
-    log
+    log,
+    get_chain_info,
+    read_table,
+    process,
+    get_first_processor
 };

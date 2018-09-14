@@ -17,11 +17,22 @@ let users = {
 };
 
 describe('Test Basic Operations: ', function () {
+    this.timeout(5000000);
+    it('Get chain info', async function () {
+        try {
+            let result = JSON.parse(await EosSdk.utils.get_chain_info(end_point, null));
+            expect(result.result.chain_id).to.be.equal(chain_id);
+        } catch (e) {
+            console.error(e);
+            expect(e).to.be.equal(null);
+        }
+    });
+
     it('User info should be correct', async function () {
         const user = 'cybchainsys1';
         try {
-            let result = await EosSdk.use(end_point, chain_id).get_account(user, null);
-            expect(result.account_name).to.be.equal(user);
+            let result = JSON.parse(await EosSdk.use(end_point, chain_id).get_account(user, null));
+            expect(result.result.account_name).to.be.equal(user);
         } catch (e) {
             console.error(e);
             expect(e).to.be.equal(null);
@@ -31,13 +42,24 @@ describe('Test Basic Operations: ', function () {
     it('Balance should be correct', async function () {
         const user = 'cybchainsys1';
         try {
-            let balance = await EosSdk.use(end_point, chain_id).get_balance(user, 'eosio.token', null);
-            expect(balance.rows[0].balance).to.be.contains('SYS');
+            let result = JSON.parse(await EosSdk.use(end_point, chain_id).get_balance(user, 'eosio.token', null));
+            expect(result.result[0].balance).to.be.contains('SYS');
         } catch (e) {
             console.error(e);
             expect(e).to.be.equal(null);
         }
+    });
 
+    it('Account history be correct', async function () {
+        const user = 'v3tvinwkueop';
+        const puk = 'EOS8dpp5DqkF4zoHdadUhfYP8zadVZHYSn96wq1e6qLkWm6zu92Qj';
+        try {
+            let result = JSON.parse(await EosSdk.use(end_point, chain_id).get_key_accounts(puk, null));
+            expect(result.result.account_names).to.be.contains(user);
+        } catch (e) {
+            console.error(e);
+            expect(e).to.be.equal(null);
+        }
     });
 
     it('Transfer should success', async function () {
@@ -45,7 +67,7 @@ describe('Test Basic Operations: ', function () {
         const pk_a = users[user_a];
         const user_b = Object.keys(users)[1];
         try {
-            let result = await EosSdk.use(end_point, chain_id, pk_a).transfer(user_a, user_b, '0.0001 SYS', '', pk_a, null);
+            let result = await EosSdk.use(end_point, chain_id, pk_a).transfer(user_a, user_b, '0.0001 SYS', '', null);
             expect(result).to.be.not.equal(null);
         } catch (e) {
             console.log(e);

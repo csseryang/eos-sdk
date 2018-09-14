@@ -1,8 +1,9 @@
 const Eos = require('eosjs');
 
-let config = {
-    // chainId: '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347',
-    // httpEndpoint: 'http://52.8.73.95:8000',
+// chainId: '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347',
+// httpEndpoint: 'http://52.8.73.95:8000',
+
+let cfg = {
     expireInSeconds: 60,
     broadcast: true,
     logger: {
@@ -12,6 +13,7 @@ let config = {
 };
 
 module.exports = (end_point, chain_id, pvk) => {
+    let config = Object.assign({}, cfg);
     config.httpEndpoint = end_point;
     config.chainId = chain_id;
 

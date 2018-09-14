@@ -1,108 +1,29 @@
+/**
+ * JavaScript helper library for mobile platforms
+ * @module EosSdk
+ */
+
 'use strict';
 
 require('babel-polyfill');
 require('util.promisify').shim();
 
-const ecc = require('eosjs-ecc');
-const _log = require('./utilities').log;
-const client = require('./client');
 const Relation = require('./contract/relation');
+const client = require('./client');
+const utils = require('./utilities');
+const ecc = require('./ecc');
 
-
-/**
- * Generate random private key/ public key pair
- * @param {function} [callback] - Callback to execute (Optional)
- */
-async function random_key (callback = _log) {
-    let rand_key = ecc.randomKey();
-    if (callback === undefined) {
-        return rand_key;
-    }
-    try {
-        let pvk = await rand_key;
-        const puk = ecc.privateToPublic(pvk);
-        callback(null, JSON.stringify({'privateKey': pvk, 'publicKey': puk}));
-    } catch (error) {
-        callback(JSON.stringify({'error': error.message || error}));
-    }
-}
-
-
-/**
- * Generate public key from private key
- * @param pvk {string} - Private key
- * @param [callback] {function} - Callback to execute (Optional)
- */
-function pvk_to_puk (pvk, callback = _log) {
-    const puk = ecc.privateToPublic(pvk);
-    try {
-        callback(null, JSON.stringify({'publicKey': puk}));
-    } catch (error) {
-        callback(JSON.stringify({'error': error.message || error}));
-    }
-}
-
-
-/**
- * Using privateKey to sign any input string
- * @param s {string} Input string
- * @param pvk {string} Private key
- * @param [callback] {function} - Callback to execute (Optional)
- */
-function sign (s, pvk, callback = _log) {
-    try {
-        const signature = ecc.sign(s, pvk);
-        callback(null, JSON.stringify({'signature': signature}));
-    } catch (error) {
-        callback(JSON.stringify({'error': error.message || error}));
-    }
-}
+const clog = utils.log;
+const read_table = utils.read_table;
+const process = utils.process;
 
 
 /**
  * EOS Client
  */
-class Client {
+class Use {
     constructor (end_point, chain_id, pvk) {
-        this.client = client(end_point, chain_id, pvk);
-    }
-
-    /**
-     * Get the original EOS client with previous settings
-     */
-    get_client () {
-        return this.client;
-    }
-
-    /**
-     *
-     * @param name
-     * @param code
-     * @param table
-     * @param callback
-     * @returns {Promise<*>}
-     * @private
-     */
-    async read_table (name, code, table, callback) {
-        const eos = this.client;
-        let call = eos.getTableRows({
-            'scope': name,
-            'code': code,
-            'table': table,
-            'json': true
-        });
-
-        if (callback === undefined) {
-            return call;
-
-        } else {
-            try {
-                let balance = await call();
-                callback(null, JSON.stringify({'result': balance.rows}));
-            } catch (error) {
-                callback(JSON.stringify({'error': error.message || error}));
-            }
-        }
+        this.eos = client(end_point, chain_id, pvk);
     }
 
     /**
@@ -110,37 +31,21 @@ class Client {
      * @param {string} name  Account name
      * @param {function} [callback]  - Callback to execute (Optional)
      */
-    async get_account (name, callback = _log) {
-        const eos = this.client;
-        let call = eos.getAccount(name);
-        if (callback === null) {
-            return call;
-        }
-        try {
-            let result = await call;
-            callback(null, JSON.stringify({'account': result}));
-        } catch (e) {
-            callback(JSON.stringify({'error': e.message || e}));
-        }
+    async get_account (name, callback = clog) {
+        let call = this.eos.getAccount(name);
+        return await process(call, callback);
     }
 
     /**
-     *
+     * Get account balance
      * @param {string} name  - Account name as index
      * @param {string} [code] - Contract account name (Optional)
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    async get_balance (name, code = 'eosio.token', callback = _log) {
-        let call = this.read_table(name, code, 'accounts', undefined);
-        if (callback === null) {
-            return call;
-        }
-        try {
-            let balance = await call;
-            callback(null, JSON.stringify({'balance': balance.rows}));
-        } catch (e) {
-            callback(JSON.stringify({'error': e.message || e}));
-        }
+    async get_balance (name, code = 'eosio.token', callback = clog) {
+        let table = 'accounts';
+        let call = read_table(this.eos, name, code, table);
+        return await process(call, callback);
     }
 
     /**
@@ -148,18 +53,9 @@ class Client {
      * @param puk {string} - Public key
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    async get_key_accounts (puk, callback = _log) {
-        const eos = this.client;
-        let call = eos.getKeyAccounts(puk);
-        if (callback === null) {
-            return call;
-        }
-        try {
-            let names = await call;
-            callback(null, JSON.stringify({'names': names}));
-        } catch (e) {
-            callback(JSON.stringify({'error': e.message || e}));
-        }
+    async get_key_accounts (puk, callback = clog) {
+        let call = this.eos.getKeyAccounts(puk);
+        return await process(call, callback);
     }
 
     /**
@@ -168,18 +64,9 @@ class Client {
      * @param [code] {string} - Contract owner name (Optional)
      * @param [callback] {function} - Callback to execute (Optional)
      */
-    async get_currency_stats (symbol, code = 'eosio.token', callback = _log) {
-        const eos = this.client;
-        let call = eos.getCurrencyStats(code, symbol);
-        if (callback === null) {
-            return call;
-        }
-        try {
-            let stats = await call;
-            callback(null, JSON.stringify({'stats': stats}));
-        } catch (e) {
-            callback(JSON.stringify({'error': e.message || e}));
-        }
+    async get_currency_stats (symbol, code = 'eosio.token', callback = clog) {
+        let call = this.eos.getCurrencyStats(code, symbol);
+        return await process(call, callback);
     }
 
     /**
@@ -190,33 +77,34 @@ class Client {
      * @param {string} memo - memo
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    async transfer (from, to, amount, memo, callback = _log) {
-        const eos = this.client;
-        let call = eos.transfer(from, to, amount, memo);
-        if (callback === null) {
-            return call;
-        }
-
-        try {
-            let result = await call;
-            callback(null, {'result': result});
-        } catch (e) {
-            callback(JSON.stringify({'error': e.message || e}));
-        }
+    async transfer (from, to, amount, memo, callback = clog) {
+        let call = this.eos.transfer(from, to, amount, memo);
+        return await process(call, callback);
     }
 
+    /**
+     *  Get Relation contract
+     * @param {string} name - relation contract name
+     * @returns {Relation}
+     */
     relation (name) {
-        return new Relation(this, name);
+        return new Relation(this.eos, name);
     }
 }
 
+/**
+ * Get client with configuration
+ * @param end_point
+ * @param chain_id
+ * @param pvk
+ * @returns {Use}
+ */
 function use (end_point, chain_id, pvk) {
-    return new Client(end_point, chain_id, pvk);
+    return new Use(end_point, chain_id, pvk);
 }
 
 module.exports = {
-    random_key,
-    pvk_to_puk,
-    sign,
     use,
+    ecc,
+    utils,
 };
