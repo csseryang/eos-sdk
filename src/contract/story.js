@@ -6,11 +6,11 @@ const parse_big_int = utils.parse_bigint;
 const process = utils.process;
 
 /**
- * Relation contract class
+ * Story contract class
  */
-class Social {
+class Story {
     /**
-     * Social contract class
+     * Story contract class
      * @param {Eos} eos
      * @param {string} contract_name  - Contract owner account name
      *
@@ -100,4 +100,4 @@ class Social {
     }
 }
 
-module.exports = Social;
+module.exports = Story;

@@ -5,7 +5,7 @@ const clog = utils.log;
 const process = utils.process;
 
 /**
- * Relation contract class
+ * Social contract class
  */
 class Social {
     /**
