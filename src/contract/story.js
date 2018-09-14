@@ -20,7 +20,12 @@ class Story {
         this.contract_name = contract_name;
     }
 
-    async contract () {
+    /**
+     * Get contract by abi
+     * @returns {Promise<*>}
+     * @private
+     */
+    async _contract () {
         return await this.eos.contract(this.contract_name);
     }
 
@@ -33,7 +38,7 @@ class Story {
      * @returns {Promise<*>}
      */
     async post (name, msg, uri, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'msg': msg,
@@ -54,7 +59,7 @@ class Story {
      * @returns {Promise<*>}
      */
     async delete (name, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'id': parse_big_int(id)
@@ -75,7 +80,7 @@ class Story {
      * @returns {Promise<*>}
      */
     async transfer (from, to, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'from': from,
             'to': to,

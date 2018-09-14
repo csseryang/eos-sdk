@@ -22,8 +22,9 @@ class Social {
     /**
      * Get contract by abi
      * @returns {Promise<*>}
+     * @private
      */
-    async contract () {
+    async _contract () {
         return await this.eos.contract(this.contract_name);
     }
 
@@ -31,11 +32,11 @@ class Social {
      * Follow someone
      * @param {string} from - account name
      * @param {string} to - target account name
-     * @param {function} [callback]
+     * @param {function} [callback] - Callback to execute (Optional)
      * @returns {Promise<*>}
      */
     async follow (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'addname': to
@@ -51,11 +52,11 @@ class Social {
      * UnFollow someone
      * @param {string} from - account name
      * @param {string} to - target account name
-     * @param {function} [callback]
+     * @param {function} [callback] - Callback to execute (Optional)
      * @returns {Promise<*>}
      */
     async unfollow (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'deletename': to
@@ -71,11 +72,11 @@ class Social {
      * Remove follower
      * @param {string} from - account name
      * @param {string} to - target account name
-     * @param {function} [callback]
+     * @param {function} [callback] - Callback to execute (Optional)
      * @returns {Promise<*>}
      */
     async remove (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'deletename': to

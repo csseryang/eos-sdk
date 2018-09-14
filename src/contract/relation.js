@@ -18,7 +18,12 @@ class Relation {
         this.contract_name = contract_name;
     }
 
-    async contract () {
+    /**
+     * Get contract by abi
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _contract () {
         return await this.eos.contract(this.contract_name);
     }
 
@@ -32,7 +37,7 @@ class Relation {
      *  * @returns {Promise<*>}
      */
     async register (name, type, uri, extra, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'type': type,
@@ -53,7 +58,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async set_uri (name, uri, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'newuri': uri
@@ -73,7 +78,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async set_type (name, type, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'newtype': type
@@ -93,7 +98,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async set_extra (name, extra, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'newextra': extra
@@ -113,7 +118,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async apply (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'apply': to
@@ -133,7 +138,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async accept (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'addname': to
@@ -153,7 +158,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async reject (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'rejectname': to
@@ -172,7 +177,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async cancel (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'cancel': to
@@ -191,7 +196,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async delete (from, to, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'deletename': to
@@ -211,7 +216,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async send_message (from, to, message, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': from,
             'receiver': to,
@@ -232,7 +237,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async send_group_message (from, targets, message, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         let todo = [];
         for (let to of targets) {
             const param = {
@@ -256,7 +261,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async delete_inbox (name, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'id': id
@@ -275,7 +280,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async delete_outbox (name, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'id': id
@@ -294,7 +299,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async delete_in_message (name, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'id': id
@@ -313,7 +318,7 @@ class Relation {
      * @param {function} [callback] - Callback to execute (Optional)
      */
     async delete_out_message (name, id, callback = clog) {
-        let contract = await this.contract();
+        let contract = await this._contract();
         const param = {
             'name': name,
             'id': id
