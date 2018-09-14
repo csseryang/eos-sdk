@@ -1,6 +1,6 @@
 const Eos = require('eosjs');
+const bigInt = require('big-integer');
 
-// import {Eos} from 'eosjs'
 /**
  *
  * @param error
@@ -45,7 +45,6 @@ async function read_table (eos, name, code, table) {
     return result.rows;
 }
 
-
 /**
  *
  * @returns {*[]}
@@ -65,10 +64,28 @@ function get_first_processor (x) {
 }
 
 /**
+ * Transfer big endian integers to number
+ * @param id
+ * @returns {*}
+ * @private
+ */
+function parse_bigint (id) {
+    if (typeof id === 'number') {
+        return id;
+    }
+
+    if (id.startsWith('0x')) {
+        id = id.substring(2);
+    }
+    const r = id.match(/../g).reverse().join('');
+    return bigInt(r, 16).toString(10);
+}
+
+/**
  *
  * @param {Promise<*>} call
  * @param {function} processor
- * @param {function }callback
+ * @param {function} [callback] - Callback to execute (Optional)
  * @returns {Promise<*>}
  * @private
  */
@@ -96,5 +113,6 @@ module.exports = {
     get_chain_info,
     read_table,
     process,
-    get_first_processor
+    get_first_processor,
+    parse_bigint
 };

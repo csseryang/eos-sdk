@@ -291,10 +291,9 @@ class Relation {
      * Delete one message by id in InBox
      * @param name {string} - Account name
      * @param id {number} Message id to delete
-     * @param pvk {string} - Private key. Must match with name
      * @param {function} [callback] - Callback to execute (Optional)
      */
-    async delete_in_message (name, id, pvk, callback = clog) {
+    async delete_in_message (name, id, callback = clog) {
         let contract = await this.contract();
         const param = {
             'name': name,
@@ -397,7 +396,13 @@ class Relation {
      */
     async get_inbox (name, callback = clog) {
         let call = read_table(this.eos, name, this.contract_name, 'inbox');
-        let processor = utils.get_first_processor;
+
+        function processor (result) {
+            let message = result[0].receivemsgs;
+            result[0].receivemsgs = '[' + message + ']';
+            return result[0];
+        }
+
         return await process(call, callback, processor);
     }
 
@@ -408,7 +413,13 @@ class Relation {
      */
     async get_outbox (name, callback = clog) {
         let call = read_table(this.eos, name, this.contract_name, 'outbox');
-        let processor = utils.get_first_processor;
+
+        function processor (result) {
+            let message = result[0].sendmsgs;
+            result[0].sendmsgs = '[' + message + ']';
+            return result[0];
+        }
+
         return await process(call, callback, processor);
     }
 }

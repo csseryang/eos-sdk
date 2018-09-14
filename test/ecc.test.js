@@ -31,4 +31,3 @@ describe('Test ECC functions: ', function () {
         });
     });
 });
-

@@ -19,7 +19,6 @@ async function random_key (callback = clog) {
     }
 }
 
-
 /**
  * Generate public key from private key
  * @param pvk {string} - Private key
@@ -33,7 +32,6 @@ function pvk_to_puk (pvk, callback = clog) {
         callback(JSON.stringify({'error': error.message || error}));
     }
 }
-
 
 /**
  * Using privateKey to sign any input string

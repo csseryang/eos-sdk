@@ -9,6 +9,9 @@ require('babel-polyfill');
 require('util.promisify').shim();
 
 const Relation = require('./contract/relation');
+const Social = require('./contract/social');
+const Story = require('./contract/story');
+
 const client = require('./client');
 const utils = require('./utilities');
 const ecc = require('./ecc');
@@ -16,7 +19,6 @@ const ecc = require('./ecc');
 const clog = utils.log;
 const read_table = utils.read_table;
 const process = utils.process;
-
 
 /**
  * EOS Client
@@ -90,13 +92,31 @@ class Use {
     relation (name) {
         return new Relation(this.eos, name);
     }
+
+    /**
+     * Get Social contract
+     * @param {string} name - contract name
+     * @returns {Social}
+     */
+    social (name) {
+        return new Social(this.eos, name);
+    }
+
+    /**
+     * Get Story contract
+     * @param {string} name - contract name
+     * @returns {Social}
+     */
+    story (name) {
+        return new Story(this.eos, name);
+    }
 }
 
 /**
- * Get client with configuration
- * @param end_point
- * @param chain_id
- * @param pvk
+ * Apply configuration
+ * @param {string} end_point - http endpoint
+ * @param {string} chain_id - chainId. Can get by calling: EosSdk.utils.get_chain_info(<end_point>)
+ * @param {string} pvk - user's private key
  * @returns {Use}
  */
 function use (end_point, chain_id, pvk) {
@@ -104,7 +124,13 @@ function use (end_point, chain_id, pvk) {
 }
 
 module.exports = {
+    // compatibility
+    pvk_to_puk: ecc.pvk_to_puk,
+    random_key: ecc.random_key,
+    sign: ecc.sign,
+
+    // updated
     use,
     ecc,
-    utils,
+    utils
 };
