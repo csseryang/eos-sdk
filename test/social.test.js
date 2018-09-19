@@ -22,7 +22,7 @@ describe('Test Follow/Unfollow: ', function () {
         try {
             await social_a.follow(user_a, user_b, null);
         } catch (e) {
-            expect(e).to.be.equal(null);
+            // expect(e).to.be.equal(null);
             console.log('already followed');
         }
 
@@ -33,6 +33,12 @@ describe('Test Follow/Unfollow: ', function () {
             console.log(res2);
             expect(res.result.follows).to.contains(user_b);
             expect(res2.result.followings).to.contains(user_a);
+
+            const res3 = JSON.parse(await social_a.is_following(user_a, user_b, null));
+            console.log(res3);
+
+            const res4 = JSON.parse(await social_b.is_follower(user_b, user_a, null));
+            console.log(res4);
         } catch (e) {
             console.log(e);
         }
@@ -50,6 +56,12 @@ describe('Test Follow/Unfollow: ', function () {
             console.log(res2);
             expect(res.result.follows).to.be.empty;
             expect(res2.result.followings).to.be.empty;
+
+            const res3 = JSON.parse(await social_a.is_following(user_a, user_b, null));
+            console.log(res3);
+
+            const res4 = JSON.parse(await social_b.is_follower(user_b, user_a, null));
+            console.log(res4);
         } catch (e) {
             console.log(e);
         }

@@ -111,6 +111,58 @@ class Social {
         let processor = utils.get_first_processor;
         return await process(call, callback, processor);
     }
+
+    /**
+     * Check if user is following target
+     * @param {string} name - Account name
+     * @param {string} target - Target account name
+     * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<*>}
+     */
+    async is_following (name, target, callback = clog) {
+        try {
+            let following = await read_table(this.eos, name, this.contract_name, 'follow');
+            let ret = JSON.stringify({'result': following[0].follows.includes(target)});
+            if (!callback) {
+                return Promise.resolve(ret);
+            } else {
+                callback(null, ret);
+            }
+        } catch (e) {
+            let error = JSON.stringify({'result': false});
+            if (!callback) {
+                return Promise.reject(error);
+            } else {
+                callback(null, error);
+            }
+        }
+    }
+
+    /**
+     * Check if target is a follower
+     * @param {string} name - Account name
+     * @param {string} target - Target account name
+     * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<*>}
+     */
+    async is_follower (name, target, callback = clog) {
+        try {
+            let follower = await read_table(this.eos, name, this.contract_name, 'following');
+            let ret = JSON.stringify({'result': follower[0].followings.includes(target)});
+            if (!callback) {
+                return Promise.resolve(ret);
+            } else {
+                callback(null, ret);
+            }
+        } catch (e) {
+            let error = JSON.stringify({'result': false});
+            if (!callback) {
+                return Promise.reject(error);
+            } else {
+                callback(null, error);
+            }
+        }
+    }
 }
 
 module.exports = Social;
