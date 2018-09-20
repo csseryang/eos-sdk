@@ -29,6 +29,65 @@ class Social {
     }
 
     /**
+     * Register new user in contract
+     * @param {string} name - Account name
+     * @param {number} id - Account ID
+     * @param {string} uri - User's external info uri
+     * @param {string} extra - User's data
+     * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
+     */
+    async register (name, id, uri, extra, callback = clog) {
+        let contract = await this._contract();
+        const param = {
+            'name': name,
+            'id': id,
+            'uri': uri,
+            'extra': extra
+        };
+        const option = {
+            'authorization': [name + `@active`]
+        };
+        let call = contract.createobj(param, option);
+        return await process(call, callback);
+    }
+
+    /**
+     * Register new user in contract
+     * @param {string} name - Account name
+     * @param {string} id - Account ID
+     * @param {string} uri - User's external info uri
+     * @param {string} extra - User's data
+     * @param {function} [callback] - Callback to execute (Optional)
+     * @returns {Promise<string>}
+     */
+    async setinfo (name, id, uri, extra, callback = clog) {
+        let contract = await this._contract();
+        const param = {
+            'name': name,
+            'id': id,
+            'uri': uri,
+            'extra': extra
+        };
+        const option = {
+            'authorization': [name + `@active`]
+        };
+        let call = contract.setinfo(param, option);
+        return await process(call, callback);
+    }
+
+    /**
+     * Get user info
+     * @param name {string} - Account name
+     * @param {function} [callback] - Callback to execute (Optional)
+     */
+    async get_info (name, callback = clog) {
+        let call = read_table(this.eos, name, this.contract_name, 'info');
+        let processor = utils.get_first_processor;
+        return await process(call, callback, processor);
+    }
+
+    /**
      * Follow someone
      * @param {string} from - Account name
      * @param {string} to - Target account name

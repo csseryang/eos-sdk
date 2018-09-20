@@ -4,10 +4,10 @@
 const EosSdk = require('../src/index.js');
 const expect = require('chai').expect;
 
-let end_point = 'http://52.8.73.95:8000';
-let chain_id = '0cab93bc5577841792732d919fb0f0afdde744af8be98403975a5d6320c3c347';
+let end_point = 'http://54.183.187.52:8000';
+let chain_id = 'fda6b767fdb6ed6ee14bcffbf384e3a40ba1674cb4d333ee66c6e518f25860ae';
 
-let contract_name = 'cybsocial111';
+let contract_name = 'cybsocial112';
 
 let user_a = 'v3tvinwkueop';
 let user_b = 'ezinktpzywqy';
@@ -17,6 +17,21 @@ let social_b = EosSdk.use(end_point, chain_id, '5K6wfQxLwCEPZkj82mwhYDq98tADKoCa
 
 describe('Test Follow/Unfollow: ', function () {
     this.timeout(5000000);
+
+    it('Test register', async function  () {
+        try {
+            await social_a.register(user_a, 1, 'uri_a', 'extra_a', null);
+        } catch (e) {
+            console.log('already registered');
+        }
+
+        let info = await social_a.get_info(user_a, null);
+        console.log(info);
+
+        await social_a.setinfo(user_a, 1, 'uri_a_2', 'extra_a_2', null);
+        let info2 = await social_a.get_info(user_a, null);
+        console.log(info2);
+    });
 
     it('Test follow', async function () {
         try {
